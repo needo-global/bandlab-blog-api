@@ -1,0 +1,59 @@
+*.swp
+*.*~
+project.lock.json
+.DS_Store
+*.pyc
+nupkg/
+node_modules
+
+# JAR TEST SCRIPTS
+Jar Test Scripts/pgp/*.csv
+Jar Test Scripts/raw/*.csv
+Jar Test Scripts/logs/*.csv
+
+# Visual Studio Code
+.vscode
+
+# Serverless
+.serverless
+
+# Rider
+.idea
+
+# User-specific files
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+build/
+bld/
+[Bb]in/
+[Oo]bj/
+[Oo]ut/
+msbuild.log
+msbuild.err
+msbuild.wrn
+
+# Visual Studio 2015
+.vs/
+
+*.orig
+
+Replication Scripts/tables/*.json
+
+.env
+
+# Localstack temp data
+.localstack/data/*
+!.localstack/data/.gitkeep
+
+keys-and-certificates/*
+!keys-and-certificates/.gitkeep
