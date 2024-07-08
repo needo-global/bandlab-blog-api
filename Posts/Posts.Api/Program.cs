@@ -1,6 +1,6 @@
-using Posts.Domain;
 using Posts.Domain.Abstract;
 using Posts.Infrastructure.Repository;
+using Posts.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,7 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 
 builder.Services.AddTransient<IPostService, PostService>();
-builder.Services.AddTransient<IPostRepository, PostRepository>();
+builder.Services.AddTransient<IPostCommandRepository, PostCommandRepository>();
 
 var app = builder.Build();
 

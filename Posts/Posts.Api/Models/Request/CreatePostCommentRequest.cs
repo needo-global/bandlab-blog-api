@@ -2,12 +2,8 @@
 
 namespace Posts.Api.Models.Request;
 
-public class CreatePostCommentRequest : IValidatableObject
+public class CreatePostCommentRequest
 {
+    [Required(ErrorMessage = "The content is required")]
     public string Content { get; set; }
-
-    public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
-    {
-        throw new NotImplementedException();
-    }
 }

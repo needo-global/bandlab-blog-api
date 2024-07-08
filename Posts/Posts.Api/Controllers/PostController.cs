@@ -31,7 +31,26 @@ public class PostController(IPostService postService) : ControllerBase
     [ProducesResponseType(typeof(ErrorDto), (int)HttpStatusCode.InternalServerError)]
     public async Task<IActionResult> PostComment([FromRoute] string postId, [FromBody] CreatePostCommentRequest request)
     {
-        throw new NotImplementedException();
+        if (string.IsNullOrWhiteSpace(postId))
+            return new BadRequestObjectResult(new ErrorDto("E001", "Invalid post id"));
+
+        if (!ModelState.IsValid)
+        {
+            return new BadRequestObjectResult(new ErrorDto("E001",
+                ModelState[nameof(CreatePostCommentRequest.Content)]?.Errors?.FirstOrDefault().ErrorMessage));
+        }
+
+        try
+        {
+            var userId = "ranganapeiris"; // TODO - This should be obtained from token claims
+            await postService.PostCommentAsync(userId, postId, request.Content);
+            return Created(); // NOTE: Location of the created resource not specified here, because we don't have route to get the comment directly for this exercise
+        }
+        catch (NotFoundException e)
+        {
+            // TODO - Logging
+            return new NotFoundObjectResult(new ErrorDto("E002", e.Message));
+        }
     }
 
     [HttpDelete("{postId}/comment/{commentId}")]

@@ -1,13 +1,7 @@
 ﻿namespace Posts.Api.Models;
 
-public class ErrorDto
+public class ErrorDto(string code, string message)
 {
-    public string Code { get; }
-    public string Message { get; }
-
-    public ErrorDto(string code, string message)
-    {
-        Code = code;
-        Message = message;
-    }
+    public string Code { get; } = code;
+    public string Message { get; } = message;
 }
