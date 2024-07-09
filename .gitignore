@@ -47,13 +47,5 @@ msbuild.wrn
 
 *.orig
 
-Replication Scripts/tables/*.json
-
 .env
 
-# Localstack temp data
-.localstack/data/*
-!.localstack/data/.gitkeep
-
-keys-and-certificates/*
-!keys-and-certificates/.gitkeep

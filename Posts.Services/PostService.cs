@@ -2,7 +2,6 @@
 using Posts.Domain.Abstract;
 using Posts.Domain.Exceptions;
 using Posts.Infrastructure.Abstract;
-using Posts.Infrastructure.Repository.Query;
 
 namespace Posts.Services;
 
