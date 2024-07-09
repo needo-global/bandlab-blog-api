@@ -9,7 +9,7 @@ function say() {
 }
 
 branchName=$1
-$dockerImageTagForWebApi=$2
+dockerImageTagForWebApi=$2
 envTag=$3
 
 say "Installing npm packages"
