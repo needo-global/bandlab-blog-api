@@ -117,7 +117,7 @@ export class BandLabApiConstruct extends Construct {
     );
 
     const portMappings: ecs.PortMapping[] = [
-      { containerPort: 5000, hostPort: 5000 },
+      { containerPort: 80, hostPort: 80 },
     ];
     webContainer.addPortMappings(...portMappings);
 
