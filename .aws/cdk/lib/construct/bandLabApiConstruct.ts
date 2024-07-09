@@ -8,6 +8,7 @@ import * as ecsPatterns from 'aws-cdk-lib/aws-ecs-patterns';
 import * as elbv2 from 'aws-cdk-lib/aws-elasticloadbalancingv2';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import * as logs from 'aws-cdk-lib/aws-logs';
+import * as route53 from 'aws-cdk-lib/aws-route53';
 import { ContainerDefinition } from 'aws-cdk-lib/aws-ecs';
 
 export interface BandLabCommandConstructProps {
@@ -120,6 +121,11 @@ export class BandLabApiConstruct extends Construct {
     ];
     webContainer.addPortMappings(...portMappings);
 
+    const hostedZone = route53.HostedZone.fromLookup(this, props.stackName + 'bandlab-hosted-zone', {
+      domainName: "api.needo.com.au",
+      privateZone: false,
+    });
+
     const loadBalancer = new elbv2.ApplicationLoadBalancer(
       this,
       props.stackName + "web-alb",
@@ -168,6 +174,8 @@ export class BandLabApiConstruct extends Construct {
           desiredCount: 1,
           listenerPort: 443,          
           redirectHTTP: false,
+          domainZone: hostedZone,
+          domainName: "api.needo.com.au",
         }
       );
 
