@@ -2,14 +2,11 @@ import * as cdk from "aws-cdk-lib";
 import { Construct } from "constructs";
 import * as dynamodb from "aws-cdk-lib/aws-dynamodb";
 import * as ec2 from "aws-cdk-lib/aws-ec2";
-import * as ecr from 'aws-cdk-lib/aws-ecr';
-import * as ecs from 'aws-cdk-lib/aws-ecs';
-import * as ecsPatterns from 'aws-cdk-lib/aws-ecs-patterns';
-import * as elbv2 from 'aws-cdk-lib/aws-elasticloadbalancingv2';
-import * as iam from 'aws-cdk-lib/aws-iam';
-import * as logs from 'aws-cdk-lib/aws-logs';
-import * as route53 from 'aws-cdk-lib/aws-route53';
-import { ContainerDefinition } from 'aws-cdk-lib/aws-ecs';
+import * as ecr from "aws-cdk-lib/aws-ecr";
+import * as ecs from "aws-cdk-lib/aws-ecs";
+import * as elbv2 from "aws-cdk-lib/aws-elasticloadbalancingv2";
+import * as route53 from "aws-cdk-lib/aws-route53";
+import * as acm from "aws-cdk-lib/aws-certificatemanager";
 
 export interface BandLabCommandConstructProps {
   stackName: string;
@@ -40,155 +37,144 @@ export class BandLabApiConstruct extends Construct {
           props.stage == "master"
             ? cdk.RemovalPolicy.RETAIN
             : cdk.RemovalPolicy.DESTROY,
+        stream: dynamodb.StreamViewType.NEW_AND_OLD_IMAGES,
       }
     );
 
-    const needoVpc = new ec2.Vpc(this, "bandLabVpc");
+    const vpc = new ec2.Vpc(this, "bandLabVpc");
 
-    // ECS Cluster
-    const cluster = new ecs.Cluster(
-      this,
-      props.stackName + "band-lab-api-web-cluster",
-      {
-        vpc: needoVpc,
-        clusterName: "band-lab-api-web-cluster",
-      }
-    );
-
-    // ECS Task Definition
-    const webTaskDefinition = new ecs.FargateTaskDefinition(
-      this,
-      props.stackName + "web-task",
-      {
-        memoryLimitMiB: 1024,
-        cpu: 256,
-      }
-    );
-
-    const webProxyRepo = ecr.Repository.fromRepositoryName(
+    const ecrRepo = ecr.Repository.fromRepositoryName(
       this,
       props.stackName + "web-proxy-repo",
       "bandlab"
     );
 
-    const ecrPolicyStatement = new iam.PolicyStatement({
-      effect: iam.Effect.ALLOW,
-      actions: ["*"],
-      resources: [webProxyRepo.repositoryArn],
-    });
-
-    webTaskDefinition.taskRole?.attachInlinePolicy(
-      new iam.Policy(this, props.stackName + "web-task-policy", {
-        policyName: "web-task-policy",
-        statements: [
-          ecrPolicyStatement,
-        ],
-      })
+    const cluster = new ecs.Cluster(
+      this,
+      props.stackName + "band-lab-api-web-cluster",
+      {
+        vpc: vpc,
+        clusterName: "band-lab-api-web-cluster",
+      }
     );
 
-    const logGroupWeb = new logs.LogGroup(
+    const taskDefinition = new ecs.FargateTaskDefinition(
       this,
-      props.stackName + "web-host-logs",
+      props.stackName + "web-task",
       {
-        logGroupName: "/aws/ecs/web-host",
-        retention: logs.RetentionDays.THREE_MONTHS,
-        removalPolicy: cdk.RemovalPolicy.DESTROY,
+        cpu: 256,
+        memoryLimitMiB: 1024,
       }
-    ) as logs.ILogGroup;
+    );
 
-    const webContainer = new ContainerDefinition(
-      this,
+    const container = taskDefinition.addContainer(
       props.stackName + "web-container",
       {
         image: ecs.ContainerImage.fromEcrRepository(
-          webProxyRepo,
-          props.dockerImageTagForWebApi,
+          ecrRepo,
+          props.dockerImageTagForWebApi
         ),
-        memoryLimitMiB: 512,
-        taskDefinition: webTaskDefinition,
-        environment: {
-        },
-        essential: true,
-        logging: ecs.LogDriver.awsLogs({
-          streamPrefix: "web-host",
-          logGroup: logGroupWeb,
+        environment: {},
+        logging: new ecs.AwsLogDriver({
+          streamPrefix: props.stackName + "web-service",
         }),
       }
     );
 
-    const portMappings: ecs.PortMapping[] = [
-      { containerPort: 80, hostPort: 80 },
-    ];
-    webContainer.addPortMappings(...portMappings);
+    container.addPortMappings({
+      containerPort: 80,
+    });
 
-    const hostedZone = route53.HostedZone.fromLookup(this, props.stackName + 'bandlab-hosted-zone', {
-      domainName: "api.needo.com.au",
-      privateZone: false,
+    const fargateService = new ecs.FargateService(
+      this,
+      props.stackName + "web-service",
+      {
+        taskDefinition,
+        cluster,
+        desiredCount: 1,
+        serviceName: props.stackName + "web-service",
+        propagateTags: ecs.PropagatedTagSource.SERVICE,
+      }
+    );
+    const certificate = new acm.Certificate(scope, props.stackName + "bandlab-certificate", {
+      domainName: "needo.com.au",
+      subjectAlternativeNames: ["*.needo.com.au"],
+      validation: acm.CertificateValidation.fromDns(),
     });
 
     const loadBalancer = new elbv2.ApplicationLoadBalancer(
-      this,
+      scope,
       props.stackName + "web-alb",
       {
-        vpc: needoVpc,
+        vpc,
         internetFacing: true,
       }
     );
 
-    const httpListener = loadBalancer.addListener(
-      props.stackName + "web-http-listener",
-      {
-        protocol: elbv2.ApplicationProtocol.HTTP,
-        port: 80,
-        defaultAction: elbv2.ListenerAction.fixedResponse(403, {
-          messageBody: "Forbidden",
-        }),
-      }
-    );
+    const listener1 = new elbv2.ApplicationListener(scope, props.stackName + "bandlab-http-listener", {
+      loadBalancer,
+      port: 80,
+      protocol: elbv2.ApplicationProtocol.HTTP,
+    });
 
-    httpListener.addAction("HttpRedirect", {
+    listener1.addAction("HttpsRedirect", {
       action: elbv2.ListenerAction.redirect({
+        permanent: true,
         protocol: "HTTPS",
+        port: "443",
         host: "#{host}",
         path: "/#{path}",
         query: "#{query}",
-        port: "443",
       }),
     });
 
-      // ECS Service with Application Load Balancer (SSL Termination)
-    const loadBalancedFargateService =
-      new ecsPatterns.ApplicationLoadBalancedFargateService(
-        this,
-        props.stackName + "web-service",
-        {
-          serviceName: "web-service",
-          cluster,
-          protocol: elbv2.ApplicationProtocol.HTTPS,
-          memoryLimitMiB: 1024,
-          cpu: 512,
-          taskDefinition: webTaskDefinition,
-          publicLoadBalancer: true,
-          assignPublicIp: false,
-          loadBalancer: loadBalancer,
-          desiredCount: 1,
-          listenerPort: 443,          
-          redirectHTTP: false,
-          domainZone: hostedZone,
-          domainName: "api.needo.com.au",
-        }
-      );
+    const listener2 = new elbv2.ApplicationListener(
+      scope,
+      props.stackName + "web-http-listener",
+      {
+        loadBalancer,
+        port: 443,
+        protocol: elbv2.ApplicationProtocol.HTTPS,
+        certificates: [certificate],
+      }
+    );
 
-    const autoScalingGroup =
-      loadBalancedFargateService.service.autoScaleTaskCount({
-        minCapacity: 1,
-        maxCapacity: 2,
-      });
+    listener2.addTargets("HttpsListenerTarget", {
+      targets: [fargateService],
+      healthCheck: {
+        path: "/",
+        healthyHttpCodes: "200,302",
+      },
+      protocol: elbv2.ApplicationProtocol.HTTP,
+      port: 80,
+    });
 
-    autoScalingGroup.scaleOnCpuUtilization("bandlab-web-cpu-scaling", {
-      targetUtilizationPercent: 90,
-      scaleInCooldown: cdk.Duration.seconds(60),
-      scaleOutCooldown: cdk.Duration.seconds(60),
+    const fullDomainName = "api.needo.com.au";
+
+    const domainZone = route53.HostedZone.fromLookup(
+      scope,
+      props.stackName + "bandlab-hosted-zone",
+      {
+        domainName: "needo.com.au",
+      }
+    );
+
+    const recordSet = new route53.CfnRecordSet(
+      scope,
+      props.stackName + "bandlab-hosted-zone-records",
+      {
+        type: "A",
+        name: `${fullDomainName}.`,
+        aliasTarget: {
+          dnsName: loadBalancer.loadBalancerDnsName,
+          hostedZoneId: loadBalancer.loadBalancerCanonicalHostedZoneId,
+        },
+        hostedZoneId: domainZone.hostedZoneId,
+      }
+    );
+
+    new cdk.CfnOutput(this, "URL", {
+      value: `https://${fullDomainName}`,
     });
   }
 }
