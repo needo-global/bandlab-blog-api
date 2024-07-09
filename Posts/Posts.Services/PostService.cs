@@ -2,10 +2,11 @@
 using Posts.Domain.Abstract;
 using Posts.Domain.Exceptions;
 using Posts.Infrastructure.Abstract;
+using Posts.Infrastructure.Repository.Query;
 
 namespace Posts.Services;
 
-public class PostService(IPostCommandRepository postCommandRepository, IStorage storage) : IPostService
+public class PostService(IPostCommandRepository postCommandRepository, IPostQueryRepository postQueryRepository, IStorage storage) : IPostService
 {
     public async Task<string> AddPostAsync(string userId, string caption, string fileName, byte[] stream)
     {
@@ -45,5 +46,11 @@ public class PostService(IPostCommandRepository postCommandRepository, IStorage 
             throw new UnauthorizedAccessException("Not the owner of the comment");
 
         await postCommandRepository.DeletePostCommentAsync(postId, commentId);
+    }
+
+    public async Task<IList<Post>> GetPostsByPaging(string lastPostToken)
+    {
+        var posts = await postQueryRepository.GetPostsByPaging(lastPostToken);
+        return posts;
     }
 }

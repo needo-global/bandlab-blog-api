@@ -2,6 +2,7 @@ using Posts.Domain.Abstract;
 using Posts.Infrastructure;
 using Posts.Infrastructure.Abstract;
 using Posts.Infrastructure.Repository.Command;
+using Posts.Infrastructure.Repository.Query;
 using Posts.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,6 +13,7 @@ builder.Services.AddControllers();
 
 builder.Services.AddTransient<IPostService, PostService>();
 builder.Services.AddTransient<IPostCommandRepository, PostCommandRepository>();
+builder.Services.AddTransient<IPostQueryRepository, PostQueryRepository>();
 builder.Services.AddTransient<IStorage, AwsS3FileStore>();
 
 var app = builder.Build();

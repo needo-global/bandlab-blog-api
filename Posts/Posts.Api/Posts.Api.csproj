@@ -18,8 +18,4 @@
     <ProjectReference Include="..\Posts.Services\Posts.Services.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Models\Response\" />
-  </ItemGroup>
-
 </Project>

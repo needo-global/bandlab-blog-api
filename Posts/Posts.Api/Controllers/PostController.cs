@@ -4,6 +4,7 @@ using System.Net;
 using Posts.Api.Models;
 using Posts.Domain.Abstract;
 using Posts.Domain.Exceptions;
+using Posts.Api.Models.Response;
 
 namespace Posts.Api.Controllers;
 
@@ -98,8 +99,25 @@ public class PostController(IPostService postService) : ControllerBase
     [ProducesResponseType(typeof(ErrorDto), (int)HttpStatusCode.InternalServerError)]
     public async Task<IActionResult> Get([FromQuery] string lastPostToken)
     {
-        // TODO - Make sure image url is null if not converted yet
-        throw new NotImplementedException();
+        var posts = await postService.GetPostsByPaging(lastPostToken);
+
+        // TODO - Use Automapper if required
+        var mapped = posts.Select(p => new PostDto
+        {
+            Id = p.Id,
+            Image = p.Image,
+            Caption = p.Caption,
+            Creator = p.Creator,
+            CreatedAt = p.CreatedAt,
+            Comments = p.Comments.Select(c => new CommentDto
+            {
+                Id = c.Id,
+                Content = c.Content,
+                Creator = c.Creator,
+                CreatedAt = c.CreatedAt,
+            }).ToList()
+        }).ToList();
+        return new OkObjectResult(new GetPostsResponse(mapped));
     }
 
     [HttpGet("{postId}", Name = "GetPostById")]
