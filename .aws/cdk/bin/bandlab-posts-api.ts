@@ -7,7 +7,7 @@ import { BandLabApiStack } from "../lib/bandlab-posts-api-stack";
 const app = new cdk.App();
 const stackName = context.getStackName(app);
 const stage = context.getStage(app);
-const dockerImageTagForWebApi = context.getStage(app);
+const dockerImageTagForWebApi = context.getDockerImageTagForWebApi(app);
 
 new BandLabApiStack(app, stackName, {
   serviceName: "bandlab-posts-api",

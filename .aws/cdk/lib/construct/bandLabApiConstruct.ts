@@ -68,7 +68,7 @@ export class BandLabApiConstruct extends Construct {
     const webProxyRepo = ecr.Repository.fromRepositoryName(
       this,
       props.stackName + "web-proxy-repo",
-      props.dockerImageTagForWebApi
+      "bandlab"
     );
 
     const ecrPolicyStatement = new iam.PolicyStatement({
@@ -102,7 +102,7 @@ export class BandLabApiConstruct extends Construct {
       {
         image: ecs.ContainerImage.fromEcrRepository(
           webProxyRepo,
-          "bandlab-posts-api:latest",
+          props.dockerImageTagForWebApi,
         ),
         memoryLimitMiB: 512,
         taskDefinition: webTaskDefinition,
