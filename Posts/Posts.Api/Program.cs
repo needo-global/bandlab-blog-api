@@ -1,3 +1,4 @@
+using Posts.Api.Middleware.Error;
 using Posts.Domain.Abstract;
 using Posts.Infrastructure;
 using Posts.Infrastructure.Abstract;
@@ -19,6 +20,8 @@ builder.Services.AddTransient<IStorage, AwsS3FileStore>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
+
+app.UseMiddleware<ExceptionMiddleware>();
 
 app.UseHttpsRedirection();
 
