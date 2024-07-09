@@ -4,13 +4,13 @@ on: [push, workflow_dispatch]
 
 env:
   DOCKER_IMAGE: bandlab-posts-api:latest
-  AWS_ECR_REPO_NAME: bandlab-posts-api
+  AWS_ECR_REPO_NAME: bandlab
   DOCKER_ARTIFACT: bandlab-posts-api-${{ github.sha }}.tar
   AWS_REGION: ap-southeast-2
 
 jobs:
   build:
-    name: Build & Tests
+    name: Build, Tests & Create Artifacts for deployment
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -64,3 +64,32 @@ jobs:
           docker load --input ${{ env.DOCKER_ARTIFACT }}
           docker tag ${{ env.DOCKER_IMAGE }} ${{ env.DOCKER_IMAGE_URL }}
           docker push ${{ env.DOCKER_IMAGE_URL }}
+
+  deploy-to-develop:
+    name: Deploy to Develop environment
+    needs: [build]
+    if: github.ref == 'refs/heads/develop'
+    runs-on: ubuntu-latest
+    environment:
+      name: develop
+    strategy:
+      matrix:
+        region: [ap-southeast-2]
+
+    steps:
+      - uses: actions/checkout@v4          
+
+      - name: Configure AWS credentials
+        if: startsWith(github.ref, 'refs/heads/renovate/') == false
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Deploy - BandLab Posts API
+        run: |
+          set -euo pipefail
+          chmod +x ./deploy.sh
+          ./deploy.sh develop ${{ github.sha }} bandlab-dev
+        working-directory: scripts
