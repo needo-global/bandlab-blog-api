@@ -1,8 +1,8 @@
 #!/usr/bin/env node
-import 'source-map-support/register';
-import * as cdk from 'aws-cdk-lib';
+import "source-map-support/register";
+import * as cdk from "aws-cdk-lib";
 import context from "../lib/helpers/context";
-import { BandLabApiStack } from '../lib/bandlab-posts-api-stack';
+import { BandLabApiStack } from "../lib/bandlab-posts-api-stack";
 
 const app = new cdk.App();
 const stackName = context.getStackName(app);
@@ -14,6 +14,10 @@ new BandLabApiStack(app, stackName, {
   stackName: stackName,
   stage,
   dockerImageTagForWebApi,
+  env: {
+    account: "231135948134",
+    region: "ap-southeast-2",
+  },
   /* If you don't specify 'env', this stack will be environment-agnostic.
    * Account/Region-dependent features and context lookups will not work,
    * but a single synthesized template can be deployed anywhere. */
