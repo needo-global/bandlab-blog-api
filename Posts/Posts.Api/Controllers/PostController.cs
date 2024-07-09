@@ -20,7 +20,16 @@ public class PostController(IPostService postService) : ControllerBase
     [ProducesResponseType(typeof(ErrorDto), (int)HttpStatusCode.InternalServerError)]
     public async Task<IActionResult> Post([FromForm] CreatePostRequest? request)
     {
-        throw new NotImplementedException();
+        if (!ModelState.IsValid) return EmitValidationResult();
+
+        var fileName = $"{Guid.NewGuid()}{Path.GetExtension(request.Filename)}";
+        await using var memoryStream = new MemoryStream();
+        await request.File.CopyToAsync(memoryStream);
+
+        var userId = "ranganapeiris"; // TODO - This should be obtained from token claims
+        var postId = await postService.AddPostAsync(userId, request.Caption, fileName, memoryStream.ToArray());
+
+        return CreatedAtRoute("GetPostById", new {postId}, new { Id = 1 });
     }
 
     [HttpPost("{postId}/comment")]
@@ -34,12 +43,8 @@ public class PostController(IPostService postService) : ControllerBase
         if (string.IsNullOrWhiteSpace(postId))
             return new BadRequestObjectResult(new ErrorDto("E001", "Invalid post id"));
 
-        if (!ModelState.IsValid)
-        {
-            return new BadRequestObjectResult(new ErrorDto("E001",
-                ModelState[nameof(CreatePostCommentRequest.Content)]?.Errors?.FirstOrDefault().ErrorMessage));
-        }
-
+        if (!ModelState.IsValid) return EmitValidationResult();
+        
         try
         {
             var userId = "ranganapeiris"; // TODO - This should be obtained from token claims
@@ -93,6 +98,19 @@ public class PostController(IPostService postService) : ControllerBase
     [ProducesResponseType(typeof(ErrorDto), (int)HttpStatusCode.InternalServerError)]
     public async Task<IActionResult> Get([FromQuery] string lastPostToken)
     {
+        // TODO - Make sure image url is null if not converted yet
         throw new NotImplementedException();
+    }
+
+    [HttpGet("{postId}", Name = "GetPostById")]
+    public async Task<IActionResult> GetPostById(string postId)
+    {
+        throw new NotImplementedException(); // NOTE: NOT Required for this exercise
+    }
+
+    private BadRequestObjectResult EmitValidationResult()
+    {
+        var errors = (from modelState in ModelState.Values from error in modelState.Errors select new ErrorDto("E001", error.ErrorMessage)).ToList();
+        return new BadRequestObjectResult(new ErrorsDto(errors));
     }
 }

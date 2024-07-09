@@ -10,4 +10,12 @@
     <ProjectReference Include="..\Posts.Domain\Posts.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Repository\Query\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AWSSDK.S3" Version="3.7.310.3" />
+  </ItemGroup>
+
 </Project>

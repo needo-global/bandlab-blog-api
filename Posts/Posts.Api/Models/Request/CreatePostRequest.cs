@@ -6,10 +6,23 @@ public class CreatePostRequest : IValidatableObject
 {
     public IFormFile? File { get; set; }
     public string Filename => File?.FileName ?? string.Empty;
+
+    [Required(ErrorMessage = "The caption is required")]
+    [MaxLength(100, ErrorMessage = "The caption is too long")]
     public string Caption { get; set; }
 
     public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
     {
-        throw new NotImplementedException();
+        if (File == null) yield return new ValidationResult("The image is invalid");
+
+        if (File.Length > Constants.MaxFileSizeInBytes)
+        {
+            yield return new ValidationResult("The image is too large");
+        }
+
+        if (!Constants.SupportedImageFormats.Any(s => s.Equals(Path.GetExtension(Filename), StringComparison.OrdinalIgnoreCase)))
+        {
+            yield return new ValidationResult("The image is in invalid format");
+        }
     }
 }

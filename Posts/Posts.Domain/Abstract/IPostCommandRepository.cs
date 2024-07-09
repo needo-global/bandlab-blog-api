@@ -2,8 +2,9 @@
 
 public interface IPostCommandRepository
 {
-    Task<Post> GetPostCommentAsync(string postId);
-    Task DeletePostCommentAsync(string postId, string commentId);
+    Task AddPostAsync(Post post, string imageUrl);
     Task<Post> GetPostAsync(string postId);
+    Task<Post> GetPostCommentAsync(string postId);
     Task PostCommentAsync(string postId, Comment comment);
+    Task DeletePostCommentAsync(string postId, string commentId);
 }
