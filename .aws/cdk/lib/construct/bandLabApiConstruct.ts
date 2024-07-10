@@ -96,10 +96,26 @@ export class BandLabApiConstruct extends Construct {
         propagateTags: ecs.PropagatedTagSource.SERVICE,
       }
     );
-    const certificate = new acm.Certificate(scope, props.stackName + "bandlab-certificate", {
-      domainName: "api.needo.com.au",
-      validation: acm.CertificateValidation.fromDns(),
+
+    const autoScalingGroup = fargateService.autoScaleTaskCount({
+      minCapacity: 1,
+      maxCapacity: 2,
     });
+
+    autoScalingGroup.scaleOnCpuUtilization("bandlab-web-cpu-scaling", {
+      targetUtilizationPercent: 90,
+      scaleInCooldown: cdk.Duration.seconds(60),
+      scaleOutCooldown: cdk.Duration.seconds(60),
+    });
+
+    const certificate = new acm.Certificate(
+      scope,
+      props.stackName + "bandlab-certificate",
+      {
+        domainName: "api.needo.com.au",
+        validation: acm.CertificateValidation.fromDns(),
+      }
+    );
 
     const loadBalancer = new elbv2.ApplicationLoadBalancer(
       scope,
@@ -110,11 +126,15 @@ export class BandLabApiConstruct extends Construct {
       }
     );
 
-    const listener1 = new elbv2.ApplicationListener(scope, props.stackName + "bandlab-http-listener", {
-      loadBalancer,
-      port: 80,
-      protocol: elbv2.ApplicationProtocol.HTTP,
-    });
+    const listener1 = new elbv2.ApplicationListener(
+      scope,
+      props.stackName + "bandlab-http-listener",
+      {
+        loadBalancer,
+        port: 80,
+        protocol: elbv2.ApplicationProtocol.HTTP,
+      }
+    );
 
     listener1.addAction("HttpsRedirect", {
       action: elbv2.ListenerAction.redirect({
