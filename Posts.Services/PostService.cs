@@ -20,14 +20,12 @@ public class PostService : IPostService
 
     public async Task<string> AddPostAsync(string userId, string caption, string fileName, byte[] stream)
     {
-        var bucketName = "band-lab-post-images"; // TODO - Move to configuration options
         var path = $"/original/{fileName}";
         
-        await _storage.WriteAsync(bucketName, path, stream);
+        var url = await _storage.WriteAsync(path, stream);
 
         var post = new Post(caption, null, userId);
-
-        var url = $"https://s3.amazonaws.com/{bucketName}{path}";
+        
         await _postCommandRepository.AddPostAsync(post, url);
 
         return post.Id;

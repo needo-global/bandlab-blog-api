@@ -7,6 +7,7 @@ import * as ecs from "aws-cdk-lib/aws-ecs";
 import * as elbv2 from "aws-cdk-lib/aws-elasticloadbalancingv2";
 import * as route53 from "aws-cdk-lib/aws-route53";
 import * as acm from "aws-cdk-lib/aws-certificatemanager";
+import * as s3 from "aws-cdk-lib/aws-s3";
 
 export interface BandLabCommandConstructProps {
   stackName: string;
@@ -40,6 +41,27 @@ export class BandLabApiConstruct extends Construct {
         stream: dynamodb.StreamViewType.NEW_AND_OLD_IMAGES,
       }
     );
+
+    const dataBucketName = props.stage == 'master' ? "bandlab-post-data" : "bandlab-post-dev-data";
+    const postsImages = new s3.Bucket(this, `${props.stackName}-post-images`, {
+      blockPublicAccess: new s3.BlockPublicAccess({ blockPublicPolicy: false, }),
+      bucketName: dataBucketName,
+      removalPolicy: props.stage == 'master' ? cdk.RemovalPolicy.RETAIN : cdk.RemovalPolicy.DESTROY,
+      publicReadAccess: true,
+      versioned: false,
+      encryption: s3.BucketEncryption.KMS_MANAGED,
+      bucketKeyEnabled: true,
+      enforceSSL: true,
+      cors: [{
+        allowedMethods: [s3.HttpMethods.GET],
+        allowedOrigins: ['*'],
+        allowedHeaders: ['Authorization', 'Content-Length'],
+        exposedHeaders: [],
+        id: 'cors-data',
+        maxAge: 3000,
+      }],
+      transferAcceleration: true,
+    });
 
     const vpc = new ec2.Vpc(this, "bandLabVpc");
 

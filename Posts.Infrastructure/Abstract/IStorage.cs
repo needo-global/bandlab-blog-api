@@ -2,5 +2,5 @@
 
 public interface IStorage
 {
-    Task WriteAsync(string containerName, string fileName, byte[] content);
+    Task<string> WriteAsync(string fileName, byte[] content);
 }
