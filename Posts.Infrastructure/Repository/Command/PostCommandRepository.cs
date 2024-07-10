@@ -33,6 +33,7 @@ public class PostCommandRepository : IPostCommandRepository
             SK = $"{PostSkPrefix}#{post.Id}",
             Id = post.Id,
             Image = post.Image,
+            OriginalImage = imageUrl,
             Caption = post.Caption,
             Creator = post.Creator,
             CreatedAt = post.CreatedAt

@@ -50,8 +50,8 @@ export class BandLabApiConstruct extends Construct {
       removalPolicy: props.stage == 'master' ? cdk.RemovalPolicy.RETAIN : cdk.RemovalPolicy.DESTROY,
       publicReadAccess: true,
       versioned: false,
-      encryption: s3.BucketEncryption.KMS_MANAGED,
-      bucketKeyEnabled: true,
+      encryption: s3.BucketEncryption.S3_MANAGED,
+      bucketKeyEnabled: false,
       enforceSSL: true,
       cors: [{
         allowedMethods: [s3.HttpMethods.GET],

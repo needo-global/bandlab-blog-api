@@ -20,7 +20,7 @@ public class PostService : IPostService
 
     public async Task<string> AddPostAsync(string userId, string caption, string fileName, byte[] content)
     {
-        var path = $"/original/{fileName}";
+        var path = $"original/{fileName}";
         
         var url = await _storage.WriteAsync(path, content);
 

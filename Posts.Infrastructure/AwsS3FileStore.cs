@@ -42,7 +42,7 @@ public class AwsS3FileStore : IStorage
                 throw new Exception($"The content for file {fileName} is not saved in S3");
             }
 
-            return $"https://s3.amazonaws.com/{bucketName}{fileName}";
+            return $"https:{bucketName}.s3.ap-southeast-2.amazonaws.com/{fileName}";
         }
         catch (Exception ex)
         {

@@ -36,7 +36,7 @@ public class PostController : ControllerBase
         var userId = "ranganapeiris"; // TODO - This should be obtained from token claims
         var postId = await _postService.AddPostAsync(userId, request.Caption, fileName, memoryStream.ToArray());
 
-        return CreatedAtRoute("GetPostById", new {postId}, new { Id = 1 });
+        return CreatedAtRoute("GetPostById", new {postId}, new { Id = postId });
     }
 
     [HttpPost("{postId}/comment")]
