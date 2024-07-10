@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.10.34928.147
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Posts.Domain", "Posts.Domain\Posts.Domain.csproj", "{46B7872C-5596-45BC-ADF8-390B9D2BAD06}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Posts.Domain", "Posts.Domain\Posts.Domain.csproj", "{46B7872C-5596-45BC-ADF8-390B9D2BAD06}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Posts.Api", "Posts.Api\Posts.Api.csproj", "{333BE2D3-45A8-4B43-AF2E-C330B6B8678A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Posts.Api", "Posts.Api\Posts.Api.csproj", "{333BE2D3-45A8-4B43-AF2E-C330B6B8678A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Posts.Infrastructure", "Posts.Infrastructure\Posts.Infrastructure.csproj", "{FEA1DCC6-CBCA-4D4B-997B-98B0CC73D194}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Posts.Infrastructure", "Posts.Infrastructure\Posts.Infrastructure.csproj", "{FEA1DCC6-CBCA-4D4B-997B-98B0CC73D194}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Posts.Services", "Posts.Services\Posts.Services.csproj", "{FD7FBB30-8021-416C-A7E6-E7172ECBFCD9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Posts.Services", "Posts.Services\Posts.Services.csproj", "{FD7FBB30-8021-416C-A7E6-E7172ECBFCD9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
