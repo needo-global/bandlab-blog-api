@@ -18,7 +18,7 @@ public class AwsS3FileStore : IStorage
         {
             PutObjectResponse response;
 
-            await using (Stream stream = new MemoryStream(content))
+            await using (var stream = new MemoryStream(content))
             {
                 var putRequest = new PutObjectRequest
                 {

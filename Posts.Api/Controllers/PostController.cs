@@ -31,7 +31,7 @@ public class PostController : ControllerBase
 
         var fileName = $"{Guid.NewGuid()}{Path.GetExtension(request.Filename)}";
         await using var memoryStream = new MemoryStream();
-        await request.File.CopyToAsync(memoryStream);
+        await request.Image.CopyToAsync(memoryStream);
 
         var userId = "ranganapeiris"; // TODO - This should be obtained from token claims
         var postId = await _postService.AddPostAsync(userId, request.Caption, fileName, memoryStream.ToArray());

@@ -18,11 +18,11 @@ public class PostService : IPostService
         _storage = storage;
     }
 
-    public async Task<string> AddPostAsync(string userId, string caption, string fileName, byte[] stream)
+    public async Task<string> AddPostAsync(string userId, string caption, string fileName, byte[] content)
     {
         var path = $"/original/{fileName}";
         
-        var url = await _storage.WriteAsync(path, stream);
+        var url = await _storage.WriteAsync(path, content);
 
         var post = new Post(caption, null, userId);
         

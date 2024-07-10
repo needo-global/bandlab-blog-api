@@ -8,6 +8,7 @@ import * as elbv2 from "aws-cdk-lib/aws-elasticloadbalancingv2";
 import * as route53 from "aws-cdk-lib/aws-route53";
 import * as acm from "aws-cdk-lib/aws-certificatemanager";
 import * as s3 from "aws-cdk-lib/aws-s3";
+import * as iam from "aws-cdk-lib/aws-iam";
 
 export interface BandLabCommandConstructProps {
   stackName: string;
@@ -86,8 +87,22 @@ export class BandLabApiConstruct extends Construct {
       {
         cpu: 256,
         memoryLimitMiB: 1024,
-      }
+      },
     );
+
+    taskDefinition.executionRole?.addToPrincipalPolicy(new iam.PolicyStatement({
+      effect: iam.Effect.ALLOW,
+      sid: "s3Actions",
+      actions: ["s3:*Object"],
+      resources: [`arn:aws:s3:::${postsImages.bucketName}/*`],
+    }));
+
+    taskDefinition.executionRole?.addToPrincipalPolicy(new iam.PolicyStatement({
+      effect: iam.Effect.ALLOW,
+      sid: "DynamoDBActions",
+      actions: ["dynamodb:*"],
+      resources: [this.postsTable.tableArn],
+    }));
 
     const container = taskDefinition.addContainer(
       props.stackName + "web-container",

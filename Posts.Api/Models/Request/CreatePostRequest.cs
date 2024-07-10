@@ -4,8 +4,8 @@ namespace Posts.Api.Models.Request;
 
 public class CreatePostRequest : IValidatableObject
 {
-    public IFormFile? File { get; set; }
-    public string Filename => File?.FileName ?? string.Empty;
+    public IFormFile? Image { get; set; }
+    public string Filename => Image?.FileName ?? string.Empty;
 
     [Required(ErrorMessage = "The caption is required")]
     [MaxLength(100, ErrorMessage = "The caption is too long")]
@@ -13,9 +13,9 @@ public class CreatePostRequest : IValidatableObject
 
     public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
     {
-        if (File == null) yield return new ValidationResult("The image is invalid");
+        if (Image == null) yield return new ValidationResult("The image is invalid");
 
-        if (File.Length > Constants.MaxFileSizeInBytes)
+        if (Image.Length > Constants.MaxFileSizeInBytes)
         {
             yield return new ValidationResult("The image is too large");
         }
