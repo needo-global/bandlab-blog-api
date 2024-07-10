@@ -8,12 +8,16 @@ public class Comment
     public string Creator { get; }
     public DateTime CreatedAt { get; }
 
-    public Comment(string postId, string userId, string content)
+    public Comment(string postId, string userId, string content, DateTime createdAt)
     {
         Id = Guid.NewGuid().ToString();
         Content = content;
         PostId = postId;
         Creator = userId;
-        CreatedAt = DateTime.UtcNow;
+        CreatedAt = createdAt;
+    }
+
+    public Comment(string postId, string userId, string content) : this(postId, userId, content, DateTime.UtcNow)
+    {
     }
 }

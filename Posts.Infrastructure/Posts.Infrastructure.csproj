@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="AWSSDK.DynamoDBv2" Version="3.7.304.6" />
     <PackageReference Include="AWSSDK.S3" Version="3.7.310.3" />
   </ItemGroup>
 

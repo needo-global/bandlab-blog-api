@@ -48,7 +48,7 @@ public class PostService : IPostService
 
     public async Task DeletePostCommentAsync(string userId, string postId, string commentId)
     {
-        var comment = await _postCommandRepository.GetPostCommentAsync(postId);
+        var comment = await _postCommandRepository.GetPostCommentAsync(postId, commentId);
 
         if (comment == null) throw new NotFoundException("comment not found");
 
