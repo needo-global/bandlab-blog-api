@@ -1,10 +1,19 @@
 ﻿namespace Posts.Domain;
 
-public class Comment(string postId, string userId, string content)
+public class Comment
 {
-    public string Id { get; set; } = Guid.NewGuid().ToString();
-    public string PostId { get; set; } = postId;
-    public string Content { get; set; } = content;
-    public string Creator { get; set; } = userId;
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public string Id { get; }
+    public string PostId { get; }
+    public string Content { get; }
+    public string Creator { get; }
+    public DateTime CreatedAt { get; }
+
+    public Comment(string postId, string userId, string content)
+    {
+        Id = Guid.NewGuid().ToString();
+        Content = content;
+        PostId = postId;
+        Creator = userId;
+        CreatedAt = DateTime.UtcNow;
+    }
 }

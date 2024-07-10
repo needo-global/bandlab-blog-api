@@ -1,11 +1,20 @@
 ﻿namespace Posts.Domain;
 
-public class Post(string caption, string imageUrl, string userId)
+public class Post
 {
-    public string Id { get; set; } = Ulid.NewUlid().ToString();
-    public string Caption { get; set; } = caption;
-    public string Image { get; set; } = imageUrl;
-    public string Creator { get; set; } = userId;
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public string Id { get; }
+    public string Caption { get; }
+    public string Image { get; }
+    public string Creator { get; }
+    public DateTime CreatedAt { get; }
     public IEnumerable<Comment> Comments { get; set; } = new List<Comment>();
+
+    public Post(string caption, string imageUrl, string userId)
+    {
+        Id = Ulid.NewUlid().ToString();
+        Caption = caption;
+        Image = imageUrl;
+        Creator = userId;
+        CreatedAt = DateTime.UtcNow;
+    }
 }

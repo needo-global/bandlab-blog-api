@@ -1,8 +1,13 @@
 ﻿namespace Posts.Api.Models.Response;
 
-public class GetPostsResponse(IList<PostDto> posts)
+public class GetPostsResponse
 {
-    public IList<PostDto> Posts { get; set; } = posts;
+    public IList<PostDto> Posts { get; }
 
-    public string? LastPostToken { get; set; } = posts?.LastOrDefault()?.Id;
+    public string? LastPostToken => Posts?.LastOrDefault()?.Id;
+
+    public GetPostsResponse(IList<PostDto> posts)
+    {
+        Posts = posts;
+    }
 }

@@ -1,6 +1,11 @@
 ﻿namespace Posts.Api.Models;
 
-public class ErrorsDto(IList<ErrorDto> errors)
+public class ErrorsDto
 {
-    public IList<ErrorDto> Errors { get; set; } = errors;
+    public IList<ErrorDto> Errors { get; }
+
+    public ErrorsDto(IList<ErrorDto> errors)
+    {
+        Errors = errors;
+    }
 }

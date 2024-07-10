@@ -12,8 +12,15 @@ namespace Posts.Api.Controllers;
 [Route("posts")]
 [ApiController]
 // [Authorize(AuthenticationSchemes = "Bearer")] - TODO - Add authentication and authorization using a bearer token
-public class PostController(IPostService postService) : ControllerBase
+public class PostController : ControllerBase
 {
+    private readonly IPostService _postService;
+
+    public PostController(IPostService postService)
+    {
+        _postService = postService;
+    }
+
     [HttpPost]
     [ProducesResponseType((int)HttpStatusCode.Created)]
     [ProducesResponseType(typeof(ErrorDto), (int)HttpStatusCode.BadRequest)]
@@ -28,7 +35,7 @@ public class PostController(IPostService postService) : ControllerBase
         await request.File.CopyToAsync(memoryStream);
 
         var userId = "ranganapeiris"; // TODO - This should be obtained from token claims
-        var postId = await postService.AddPostAsync(userId, request.Caption, fileName, memoryStream.ToArray());
+        var postId = await _postService.AddPostAsync(userId, request.Caption, fileName, memoryStream.ToArray());
 
         return CreatedAtRoute("GetPostById", new {postId}, new { Id = 1 });
     }
@@ -49,8 +56,8 @@ public class PostController(IPostService postService) : ControllerBase
         try
         {
             var userId = "ranganapeiris"; // TODO - This should be obtained from token claims
-            await postService.PostCommentAsync(userId, postId, request.Content);
-            return Created(); // NOTE: Location of the created resource not specified here, because we don't have route to get the comment directly for this exercise
+            await _postService.PostCommentAsync(userId, postId, request.Content);
+            return CreatedAtRoute("GetPostById", new { postId }, new { Id = 1 }); // NOTE: Location of the created resource not specified here, because we don't have route to get the comment directly for this exercise
         }
         catch (NotFoundException e)
         {
@@ -77,7 +84,7 @@ public class PostController(IPostService postService) : ControllerBase
         try
         {
             var userId = "ranganapeiris"; // TODO - This should be obtained from token claims
-            await postService.DeletePostCommentAsync(userId, postId, commentId);
+            await _postService.DeletePostCommentAsync(userId, postId, commentId);
             return Ok();
         }
         catch (UnauthorizedAccessException e) // TODO - Remove once the authorization policy is added to the action method
@@ -99,7 +106,7 @@ public class PostController(IPostService postService) : ControllerBase
     [ProducesResponseType(typeof(ErrorDto), (int)HttpStatusCode.InternalServerError)]
     public async Task<IActionResult> Get([FromQuery] string? lastPostToken)
     {
-        var posts = await postService.GetPostsByPaging(lastPostToken);
+        var posts = await _postService.GetPostsByPaging(lastPostToken);
 
         // TODO - Use Automapper if required
         var mapped = posts.Select(p => new PostDto

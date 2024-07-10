@@ -4,17 +4,26 @@ using Posts.Api.Models;
 
 namespace Posts.Api.Middleware.Error;
 
-public class ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddleware> logger)
+public class ExceptionMiddleware
 {
+    private readonly RequestDelegate _next;
+    private readonly ILogger<ExceptionMiddleware> _logger;
+
+    public ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddleware> logger)
+    {
+        _next = next;
+        _logger = logger;
+    }
+
     public async Task InvokeAsync(HttpContext httpContext)
     {
         try
         {
-            await next(httpContext);
+            await _next(httpContext);
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Unhandled exception");
+            _logger.LogError(ex, "Unhandled exception");
 
             await HandleExceptionAsync(httpContext);
         }
