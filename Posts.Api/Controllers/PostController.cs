@@ -8,7 +8,6 @@ using Posts.Api.Models.Response;
 
 namespace Posts.Api.Controllers;
 
-[RequireHttps]
 [Route("posts")]
 [ApiController]
 // [Authorize(AuthenticationSchemes = "Bearer")] - TODO - Add authentication and authorization using a bearer token
