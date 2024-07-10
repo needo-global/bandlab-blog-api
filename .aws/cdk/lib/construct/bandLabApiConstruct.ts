@@ -174,7 +174,7 @@ export class BandLabApiConstruct extends Construct {
       scope,
       props.stackName + "bandlab-hosted-zone",
       {
-        domainName: "needo.com.au",
+        domainName: "api.needo.com.au",
       }
     );
 
