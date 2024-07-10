@@ -44,7 +44,7 @@ public class PostCommandRepository : IPostCommandRepository
 
     public async Task<Post?> GetPostAsync(string postId)
     {
-        var entity = await _context.LoadAsync<PostEntity>($"{PostPkPrefix}{postId}", $"{PostSkPrefix}#{postId}");
+        var entity = await _context.LoadAsync<PostEntity>($"{PostPkPrefix}{postId}", $"{PostSkPrefix}#{postId}", _dbConfig);
 
         return entity == null ? null : new Post(entity.Id, entity.Image, entity.Creator, entity.CreatedAt);
     }
@@ -66,13 +66,13 @@ public class PostCommandRepository : IPostCommandRepository
 
     public async Task<Comment?> GetPostCommentAsync(string postId, string commentId)
     {
-        var entity = await _context.LoadAsync<CommentEntity>($"{PostPkPrefix}{postId}", $"{CommentSkPrefix}#{commentId}");
+        var entity = await _context.LoadAsync<CommentEntity>($"{PostPkPrefix}{postId}", $"{CommentSkPrefix}#{commentId}", _dbConfig);
 
         return entity == null ? null : new Comment(entity.Id, entity.Creator, entity.Content, entity.CreatedAt);
     }
 
     public async Task DeletePostCommentAsync(string postId, string commentId)
     {
-        await _context.DeleteAsync<CommentEntity>($"{PostPkPrefix}{postId}", $"{CommentSkPrefix}#{commentId}");
+        await _context.DeleteAsync<CommentEntity>($"{PostPkPrefix}{postId}", $"{CommentSkPrefix}#{commentId}", _dbConfig);
     }
 }
