@@ -1,3 +1,4 @@
+using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DataModel;
 using Posts.Api.Middleware.Error;
 using Posts.Domain.Abstract;
@@ -17,6 +18,8 @@ builder.Services.AddTransient<IPostService, PostService>();
 builder.Services.AddTransient<IPostCommandRepository, PostCommandRepository>();
 builder.Services.AddTransient<IPostQueryRepository, PostQueryRepository>();
 builder.Services.AddTransient<IStorage, AwsS3FileStore>();
+builder.Services.AddDefaultAWSOptions(builder.Configuration.GetAWSOptions());
+builder.Services.AddAWSService<IAmazonDynamoDB>();
 builder.Services.AddSingleton<IDynamoDBContext, DynamoDBContext>();
 
 var app = builder.Build();
