@@ -10,7 +10,7 @@ public class Comment
 
     public Comment(string postId, string userId, string content, DateTime createdAt)
     {
-        Id = Guid.NewGuid().ToString();
+        Id = Ulid.NewUlid().ToString();
         Content = content;
         PostId = postId;
         Creator = userId;

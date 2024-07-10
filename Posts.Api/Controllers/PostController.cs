@@ -55,8 +55,8 @@ public class PostController : ControllerBase
         try
         {
             var userId = "ranganapeiris"; // TODO - This should be obtained from token claims
-            await _postService.PostCommentAsync(userId, postId, request.Content);
-            return CreatedAtRoute("GetPostById", new { postId }, new { Id = 1 }); // NOTE: Location of the created resource not specified here, because we don't have route to get the comment directly for this exercise
+            var commentId = await _postService.PostCommentAsync(userId, postId, request.Content);
+            return CreatedAtRoute("GetPostById", new { postId }, new { Id = commentId });
         }
         catch (NotFoundException e)
         {
