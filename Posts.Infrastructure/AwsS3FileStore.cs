@@ -13,6 +13,11 @@ public class AwsS3FileStore : IStorage
     private readonly ILogger<AwsS3FileStore> _logger;
     private readonly IAmazonS3 _client = new AmazonS3Client();
 
+    public AwsS3FileStore(ILogger<AwsS3FileStore> logger)
+    {
+        _logger = logger;
+    }
+
     public async Task<string> WriteAsync(string fileName, byte[] content)
     {
         var bucketName = "bandlab-post-dev-data"; // TODO - Move to configuration options
