@@ -5,6 +5,7 @@ using Posts.Api.Models;
 using Posts.Domain.Abstract;
 using Posts.Domain.Exceptions;
 using Posts.Api.Models.Response;
+using Posts.Api.Middleware.Validation;
 
 namespace Posts.Api.Controllers;
 
@@ -21,14 +22,13 @@ public class PostController : ControllerBase
     }
 
     [HttpPost]
+    [ServiceFilter(typeof(ValidationFilterAttribute))]
     [ProducesResponseType((int)HttpStatusCode.Created)]
     [ProducesResponseType(typeof(ErrorDto), (int)HttpStatusCode.BadRequest)]
     [ProducesResponseType(typeof(ErrorDto), (int)HttpStatusCode.Unauthorized)]
     [ProducesResponseType(typeof(ErrorDto), (int)HttpStatusCode.InternalServerError)]
     public async Task<IActionResult> Post([FromForm] CreatePostRequest? request)
     {
-        if (!ModelState.IsValid) return EmitValidationResult();
-
         var fileName = $"{Guid.NewGuid()}{Path.GetExtension(request.Filename)}";
         await using var memoryStream = new MemoryStream();
         await request.Image.CopyToAsync(memoryStream);
@@ -40,6 +40,7 @@ public class PostController : ControllerBase
     }
 
     [HttpPost("{postId}/comment")]
+    [ServiceFilter(typeof(ValidationFilterAttribute))]
     [ProducesResponseType((int)HttpStatusCode.Created)]
     [ProducesResponseType(typeof(ErrorDto), (int)HttpStatusCode.BadRequest)]
     [ProducesResponseType(typeof(ErrorDto), (int)HttpStatusCode.NotFound)]
@@ -49,9 +50,7 @@ public class PostController : ControllerBase
     {
         if (string.IsNullOrWhiteSpace(postId))
             return new BadRequestObjectResult(new ErrorDto("E001", "Invalid post id"));
-
-        if (!ModelState.IsValid) return EmitValidationResult();
-        
+       
         try
         {
             var userId = "ranganapeiris"; // TODO - This should be obtained from token claims
