@@ -53,7 +53,7 @@ public class PostCommandRepository : IPostCommandRepository
         var commentEntity = new CommentEntity
         {
             PK = $"{PostPkPrefix}{postId}",
-            SK = $"{CommentSkPrefix}#{comment.Id}",
+            SK = $"{CommentSkPrefix}#{comment.CreatedAt.Ticks}{comment.Id}",
             Id = comment.Id,
             Content = comment.Content,
             Creator = comment.Creator,

@@ -90,14 +90,21 @@ export class BandLabApiConstruct extends Construct {
       },
     );
 
-    taskDefinition.executionRole?.addToPrincipalPolicy(new iam.PolicyStatement({
+    taskDefinition.taskRole?.addToPrincipalPolicy(new iam.PolicyStatement({
       effect: iam.Effect.ALLOW,
-      sid: "s3Actions",
-      actions: ["s3:*Object"],
-      resources: [`arn:aws:s3:::${postsImages.bucketName}/*`],
+      sid: "s3BucketActions",
+      actions: ["s3:ListAllMyBuckets", "s3:ListBucket"],
+      resources: [`*`],
     }));
 
-    taskDefinition.executionRole?.addToPrincipalPolicy(new iam.PolicyStatement({
+    taskDefinition.taskRole?.addToPrincipalPolicy(new iam.PolicyStatement({
+      effect: iam.Effect.ALLOW,
+      sid: "s3ObjectActions",
+      actions: ["s3:*Object"],
+      resources: [`*`],
+    }));
+
+    taskDefinition.taskRole?.addToPrincipalPolicy(new iam.PolicyStatement({
       effect: iam.Effect.ALLOW,
       sid: "DynamoDBActions",
       actions: ["dynamodb:*"],
