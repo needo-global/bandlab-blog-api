@@ -97,7 +97,7 @@ public class PostController(IPostService postService) : ControllerBase
     [ProducesResponseType(typeof(ErrorDto), (int)HttpStatusCode.BadRequest)]
     [ProducesResponseType(typeof(ErrorDto), (int)HttpStatusCode.Unauthorized)]
     [ProducesResponseType(typeof(ErrorDto), (int)HttpStatusCode.InternalServerError)]
-    public async Task<IActionResult> Get([FromQuery] string lastPostToken)
+    public async Task<IActionResult> Get([FromQuery] string? lastPostToken)
     {
         var posts = await postService.GetPostsByPaging(lastPostToken);
 
