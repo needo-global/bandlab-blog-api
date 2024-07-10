@@ -97,8 +97,7 @@ export class BandLabApiConstruct extends Construct {
       }
     );
     const certificate = new acm.Certificate(scope, props.stackName + "bandlab-certificate", {
-      domainName: "needo.com.au",
-      subjectAlternativeNames: ["*.needo.com.au"],
+      domainName: "api.needo.com.au",
       validation: acm.CertificateValidation.fromDns(),
     });
 
