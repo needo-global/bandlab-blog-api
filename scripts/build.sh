@@ -19,4 +19,16 @@ dotnet build -c Release --no-restore
 say "Running tests"
 dotnet test -c Release --no-build
 
+dotnet tool install -g Amazon.Lambda.Tools
+
+pushd Posts.DatabaseEventListener > /dev/null
+
+say "Posts.DatabaseEventListener"
+dotnet lambda package \
+  --configuration release \
+  --framework net6.0 \
+  --output-package bin/release/net6.0/posts.databaseeventlistener.zip \
+
+popd > /dev/null
+
 say "Build Done!"

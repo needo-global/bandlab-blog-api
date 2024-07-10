@@ -130,10 +130,4 @@ public class PostController : ControllerBase
     {
         throw new NotImplementedException(); // NOTE: NOT Required for this exercise
     }
-
-    private BadRequestObjectResult EmitValidationResult()
-    {
-        var errors = (from modelState in ModelState.Values from error in modelState.Errors select new ErrorDto("E001", error.ErrorMessage)).ToList();
-        return new BadRequestObjectResult(new ErrorsDto(errors));
-    }
 }

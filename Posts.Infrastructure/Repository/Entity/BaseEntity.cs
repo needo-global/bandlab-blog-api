@@ -8,4 +8,5 @@ internal class BaseEntity
     public string PK { get; set; }
     [DynamoDBRangeKey]
     public string SK { get; set; }
+    public string Type { get; set; }
 }

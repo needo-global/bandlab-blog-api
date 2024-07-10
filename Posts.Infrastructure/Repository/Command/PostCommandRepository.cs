@@ -32,11 +32,14 @@ public class PostCommandRepository : IPostCommandRepository
             PK = $"{PostPkPrefix}{post.Id}",
             SK = $"{PostSkPrefix}{post.Id}",
             Id = post.Id,
+            Type = Constants.Post,
             Image = post.Image,
             OriginalImage = imageUrl,
             Caption = post.Caption,
             Creator = post.Creator,
-            CreatedAt = post.CreatedAt
+            CreatedAt = post.CreatedAt,
+            CommentCount = 0,
+            RecentComments = null
         };
 
         await _context.SaveAsync(postEntity, _dbConfig);
@@ -56,6 +59,7 @@ public class PostCommandRepository : IPostCommandRepository
             PK = $"{PostPkPrefix}{postId}",
             SK = $"{CommentSkPrefix}{comment.Id}",
             Id = comment.Id,
+            Type = Constants.Comment,
             Content = comment.Content,
             Creator = comment.Creator,
             CreatedAt = comment.CreatedAt

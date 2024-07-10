@@ -65,6 +65,12 @@ jobs:
           docker tag ${{ env.DOCKER_IMAGE }} ${{ env.DOCKER_IMAGE_URL }}
           docker push ${{ env.DOCKER_IMAGE_URL }}
 
+      - uses: actions/upload-artifact@v3
+        with:
+          name: posts.databaseeventlistener
+          path: ${{ github.workspace }}/Posts.DatabaseEventListener/bin/release/net6.0/posts.databaseeventlistener.zip
+          if-no-files-found: error
+
   deploy-to-develop:
     name: Deploy to Develop environment
     needs: [build]
