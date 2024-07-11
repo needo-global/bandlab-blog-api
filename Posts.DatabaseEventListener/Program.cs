@@ -15,6 +15,7 @@ const string Remove = "REMOVE";
 
 var handler = async (DynamoDBEvent ddbEvent, ILambdaContext lambdaContext) =>
 {
+    Console.WriteLine("Start processing");
     using var scope = startup.ServiceProvider.CreateScope();
 
     var streamsEventResponse = new StreamsEventResponse();
@@ -22,6 +23,7 @@ var handler = async (DynamoDBEvent ddbEvent, ILambdaContext lambdaContext) =>
     if (ddbEvent.Records == null)
     {
         // TODO Logging
+        Console.WriteLine("Nothing to process");
         return streamsEventResponse;
     }
 
@@ -37,6 +39,8 @@ var handler = async (DynamoDBEvent ddbEvent, ILambdaContext lambdaContext) =>
         catch (Exception ex)
         {
             // TODO Logging
+            Console.WriteLine(ex.Message);
+            Console.WriteLine(ex.StackTrace);
             batchItemFailures.Add(new StreamsEventResponse.BatchItemFailure { ItemIdentifier = record.Dynamodb.SequenceNumber });
         }
     }
