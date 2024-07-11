@@ -19,6 +19,7 @@ public class Startup
         var configuration = ConfigureAppConfiguration();
 
         var services = new ServiceCollection();
+        services.AddLogging();
         ConfigureServices(services, configuration);
 
         ServiceProvider = services.BuildServiceProvider();
