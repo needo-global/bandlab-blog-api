@@ -37,7 +37,6 @@ export class BandLabDatabaseListenerConstruct extends Construct {
             batchSize: 10,
             bisectBatchOnError: true,
             reportBatchItemFailures: true,
-            maxBatchingWindow: cdk.Duration.millis(100)
           })) 
 
         // Define and add cloudwatch access for the reserve virtual accounts function
