@@ -2,6 +2,7 @@ import * as cdk from 'aws-cdk-lib';
 import {Construct} from 'constructs';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
 import * as iam from 'aws-cdk-lib/aws-iam';
+import * as s3 from "aws-cdk-lib/aws-s3";
 import * as dynamodb from 'aws-cdk-lib/aws-dynamodb';
 import { DynamoEventSource } from 'aws-cdk-lib/aws-lambda-event-sources';
 
@@ -9,6 +10,7 @@ export interface BandLabDatabaseListenerConstructProps {
     stackName: string;
     stage: string;
     postsTable: dynamodb.Table;
+    postsImages: s3.Bucket;
 }
 
 export class BandLabDatabaseListenerConstruct extends Construct {
@@ -51,5 +53,6 @@ export class BandLabDatabaseListenerConstruct extends Construct {
         props.postsTable.grantStream(databaseListenerFunction);
         props.postsTable.grantStreamRead(databaseListenerFunction);
         databaseListenerFunction.addToRolePolicy(logSSMRolePolicyStatement);
+        props.postsImages.grantReadWrite(databaseListenerFunction);
     }
 }

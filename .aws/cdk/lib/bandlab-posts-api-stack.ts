@@ -24,6 +24,7 @@ export class BandLabApiStack extends cdk.Stack {
       stackName: props.stackName,
       stage: props.stage,
       postsTable: bandLabApiResources.postsTable,
+      postsImages: bandLabApiResources.postsImages,
     });
     
   }

@@ -18,6 +18,7 @@ export interface BandLabCommandConstructProps {
 
 export class BandLabApiConstruct extends Construct {
   public postsTable: dynamodb.Table;
+  public postsImages: s3.Bucket;
   constructor(
     scope: Construct,
     id: string,
@@ -52,7 +53,7 @@ export class BandLabApiConstruct extends Construct {
     });
 
     const dataBucketName = props.stage == 'master' ? "bandlab-post-data" : "bandlab-post-dev-data";
-    const postsImages = new s3.Bucket(this, `${props.stackName}-post-images`, {
+    this.postsImages = new s3.Bucket(this, `${props.stackName}-post-images`, {
       blockPublicAccess: new s3.BlockPublicAccess({ blockPublicPolicy: false, }),
       bucketName: dataBucketName,
       removalPolicy: props.stage == 'master' ? cdk.RemovalPolicy.RETAIN : cdk.RemovalPolicy.DESTROY,
