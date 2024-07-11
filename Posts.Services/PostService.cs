@@ -22,7 +22,7 @@ public class PostService : IPostService
     {
         var post = new Post(caption, null, userId);
 
-        var path = $"original/{post.Id}";
+        var path = $"original/{post.Id}{Path.GetExtension(fileName)}";
 
         var url = await _storage.WriteAsync(path, content);
 

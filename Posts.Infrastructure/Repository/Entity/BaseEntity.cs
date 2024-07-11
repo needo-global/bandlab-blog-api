@@ -5,7 +5,7 @@ namespace Posts.Infrastructure.Repository.Entity;
 internal class BaseEntity
 {
     [DynamoDBHashKey]
-    public string PK { get; set; }
+    public virtual string PK { get; set; }
     [DynamoDBRangeKey]
     public string SK { get; set; }
     public string Id { get; set; }

@@ -7,10 +7,12 @@ internal class PostEntity : BaseEntity
     internal const string PostsByCommentCountIndex = "PostsByCommentCountIndex";
 
     [DynamoDBHashKey]
-    public string PK { get; set; }
+    [DynamoDBGlobalSecondaryIndexHashKey(PostsByCommentCountIndex)]
+    public override string PK { get; set; }
     public string Caption { get; set; }
     public string Image { get; set; }
     public string OriginalImage { get; set; }
+    [DynamoDBGlobalSecondaryIndexRangeKey(PostsByCommentCountIndex)]
     public int CommentCount { get; set; }
     public IList<CommentEntity>? RecentComments { get; set; }
 }

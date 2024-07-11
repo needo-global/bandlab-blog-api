@@ -29,12 +29,11 @@ public class PostController : ControllerBase
     [ProducesResponseType(typeof(ErrorDto), (int)HttpStatusCode.InternalServerError)]
     public async Task<IActionResult> Post([FromForm] CreatePostRequest? request)
     {
-        var fileName = $"{Guid.NewGuid()}{Path.GetExtension(request.Filename)}";
         await using var memoryStream = new MemoryStream();
         await request.Image.CopyToAsync(memoryStream);
 
         var userId = "ranganapeiris"; // TODO - This should be obtained from token claims
-        var postId = await _postService.AddPostAsync(userId, request.Caption, fileName, memoryStream.ToArray());
+        var postId = await _postService.AddPostAsync(userId, request.Caption, request.Filename, memoryStream.ToArray());
 
         return CreatedAtRoute("GetPostById", new {postId}, new { Id = postId });
     }

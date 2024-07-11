@@ -10,7 +10,7 @@ public static class Mapper
         return new Post(
             record.SafeRetrieveValue("Id"),
             record.SafeRetrieveValue("Caption"),
-            record.SafeRetrieveValue("Image"),
+            record.SafeRetrieveValue("OriginalImage"),
             record.SafeRetrieveValue("Creator"),
             record.SafeRetrieveDate("CreatedAt"));
     }

@@ -27,11 +27,11 @@ internal class PostProcessingStrategy : IHandlerStrategy
     {
         var post = input as Post;
 
-        var originalImage = await _storage.ReadAsync($"original/{post.Id}");
+        var originalImage = await _storage.ReadAsync($"original/{post.Id}{Path.GetExtension(post.Image)}");
 
         var convertedImage = await _imageProcessingService.ConvertAsync(originalImage);
 
-        var convertedImageUrl = await _storage.WriteAsync($"converted/{post.Id}", convertedImage);
+        var convertedImageUrl = await _storage.WriteAsync($"converted/{post.Id}.jpg", convertedImage);
 
         post.SetConvertedImage(convertedImageUrl);
 
