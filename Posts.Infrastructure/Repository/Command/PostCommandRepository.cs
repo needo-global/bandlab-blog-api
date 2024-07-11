@@ -3,6 +3,7 @@ using Posts.Domain.Abstract;
 using Amazon.DynamoDBv2.DataModel;
 using Amazon.DynamoDBv2;
 using Posts.Infrastructure.Repository.Entity;
+using Amazon.DynamoDBv2.DocumentModel;
 
 namespace Posts.Infrastructure.Repository.Command;
 
@@ -12,6 +13,7 @@ public class PostCommandRepository : IPostCommandRepository
 
     private const string PostPkPrefix = "POST#";
     private const string PostSkPrefix = "POST#";
+    private const string CommentPkPrefix = "COMMENT#";
     private const string CommentSkPrefix = "COMMENT#";
 
     private readonly DynamoDBOperationConfig _dbConfig = new()
@@ -36,7 +38,7 @@ public class PostCommandRepository : IPostCommandRepository
     {
         var commentEntity = new CommentEntity
         {
-            PK = $"{PostPkPrefix}{postId}",
+            PK = $"{CommentPkPrefix}{postId}",
             SK = $"{CommentSkPrefix}{comment.Id}",
             Id = comment.Id,
             Type = Constants.Comment,
@@ -51,7 +53,7 @@ public class PostCommandRepository : IPostCommandRepository
 
     public async Task DeletePostCommentAsync(string postId, string commentId)
     {
-        await _context.DeleteAsync<CommentEntity>($"{PostPkPrefix}{postId}", $"{CommentSkPrefix}{commentId}", _dbConfig);
+        await _context.DeleteAsync<CommentEntity>($"{CommentPkPrefix}{postId}", $"{CommentSkPrefix}{commentId}", _dbConfig);
     }
 
     public async Task UpdatePostCommentsInfoAsync(string postId, int commentCountIncrement, int latestCommentsCount)
@@ -60,7 +62,23 @@ public class PostCommandRepository : IPostCommandRepository
 
         postEntity.CommentCount += commentCountIncrement;
 
+        // TODO - Use a GSI
+        var qf = new QueryFilter();
+        qf.AddCondition(nameof(CommentEntity.PK), QueryOperator.Equal, $"{CommentPkPrefix}{postId}");
+
+        var queryConfig = new QueryOperationConfig
+        {
+            Filter = qf,
+            Select = SelectValues.AllAttributes,
+            Limit = 2,
+            BackwardSearch = true
+        };
+
+        var recentComments = await _context.QueryAsync<CommentEntity>(queryConfig, _dbConfig).GetRemainingAsync();
+
+        postEntity.RecentComments = recentComments;
         postEntity.UpdatedAt = DateTime.UtcNow;
+
         await _context.SaveAsync(postEntity, _dbConfig);
     }
 
