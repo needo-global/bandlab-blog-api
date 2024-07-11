@@ -73,7 +73,7 @@ public class PostCommandRepository : IPostCommandRepository
             BackwardSearch = true
         };
 
-        var recentComments = await _context.QueryAsync<CommentEntity>(queryConfig, _dbConfig).GetRemainingAsync();
+        var recentComments = await _context.FromQueryAsync<CommentEntity>(queryConfig, _dbConfig).GetRemainingAsync();
 
         postEntity.RecentComments = recentComments;
         postEntity.UpdatedAt = DateTime.UtcNow;
