@@ -27,7 +27,7 @@ say "Posts.DatabaseEventListener"
 dotnet lambda package \
   --configuration release \
   --framework net6.0 \
-  --output-package bin/release/net6.0/posts.databaseeventlistener.zip \
+  --output-package bin/release/net6.0/posts-databaseeventlistener.zip \
 
 popd > /dev/null
 

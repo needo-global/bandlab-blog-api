@@ -3,6 +3,7 @@ import {Construct} from 'constructs';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import * as dynamodb from 'aws-cdk-lib/aws-dynamodb';
+import { DynamoEventSource } from 'aws-cdk-lib/aws-lambda-event-sources';
 
 export interface BandLabDatabaseListenerConstructProps {
     stackName: string;
@@ -21,7 +22,7 @@ export class BandLabDatabaseListenerConstruct extends Construct {
             functionName: functionName,
             description: "This function acts as the handler for processing DynamoDB stream events",
             runtime: lambda.Runtime.DOTNET_6,
-            code: lambda.Code.fromAsset("../../artifacts/posts.databaseeventlistener/posts.databaseeventlistener.zip"),
+            code: lambda.Code.fromAsset("../../artifacts/posts-databaseeventlistener/posts-databaseeventlistener.zip"),
             handler: "Posts.DatabaseEventListener",
             memorySize: 512,
             timeout: cdk.Duration.seconds(300),
@@ -29,6 +30,11 @@ export class BandLabDatabaseListenerConstruct extends Construct {
                 // TODO - Set up environment variables to avoid hardcoding in code
             },
         });
+
+        databaseListenerFunction.addEventSource(new DynamoEventSource(props.postsTable,{
+            startingPosition: lambda.StartingPosition.LATEST,
+            batchSize: 10        
+          })) 
 
         // Define and add cloudwatch access for the reserve virtual accounts function
         const logSSMRolePolicyStatement = new iam.PolicyStatement({
