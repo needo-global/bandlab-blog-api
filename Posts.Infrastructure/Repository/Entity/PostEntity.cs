@@ -14,5 +14,5 @@ internal class PostEntity : BaseEntity
     public string OriginalImage { get; set; }
     [DynamoDBGlobalSecondaryIndexRangeKey(PostsByCommentCountIndex)]
     public int CommentCount { get; set; }
-    public IList<CommentEntity>? RecentComments { get; set; }
+    public string? RecentComments { get; set; }
 }

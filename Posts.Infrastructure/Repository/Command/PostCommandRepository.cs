@@ -1,4 +1,5 @@
-﻿using Posts.Domain;
+﻿using System.Text.Json;
+using Posts.Domain;
 using Posts.Domain.Abstract;
 using Amazon.DynamoDBv2.DataModel;
 using Amazon.DynamoDBv2;
@@ -75,7 +76,7 @@ public class PostCommandRepository : IPostCommandRepository
 
         var recentComments = await _context.FromQueryAsync<CommentEntity>(queryConfig, _dbConfig).GetRemainingAsync();
 
-        postEntity.RecentComments = recentComments;
+        postEntity.RecentComments = JsonSerializer.Serialize(recentComments);
         postEntity.UpdatedAt = DateTime.UtcNow;
 
         await _context.SaveAsync(postEntity, _dbConfig);
