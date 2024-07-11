@@ -1,6 +1,8 @@
-﻿namespace Posts.Domain;
+﻿using Posts.Domain.Abstract;
 
-public class Post
+namespace Posts.Domain;
+
+public class Post : IEventInstance
 {
     public string Id { get; }
     public string Caption { get; }
@@ -9,13 +11,13 @@ public class Post
     public DateTime CreatedAt { get; }
     public IEnumerable<Comment> Comments { get; set; } = new List<Comment>();
 
-    public Post(string caption, string imageUrl, string userId) : this(caption, imageUrl, userId, DateTime.UtcNow)
+    public Post(string caption, string imageUrl, string userId) : this(Ulid.NewUlid().ToString(), caption, imageUrl, userId, DateTime.UtcNow)
     {
     }
 
-    public Post(string caption, string imageUrl, string userId, DateTime createdAt)
+    public Post(string id, string caption, string imageUrl, string userId, DateTime createdAt)
     {
-        Id = Ulid.NewUlid().ToString();
+        Id = id;
         Caption = caption;
         Image = imageUrl;
         Creator = userId;

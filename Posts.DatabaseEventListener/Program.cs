@@ -5,6 +5,7 @@ using Amazon.Lambda.Serialization.SystemTextJson;
 using Microsoft.Extensions.DependencyInjection;
 using Posts.DatabaseEventListener;
 using Posts.DatabaseEventListener.Handler.Abstract;
+using Posts.DatabaseEventListener.Extensions;
 
 var startup = new Startup();
 
@@ -49,23 +50,30 @@ async Task HandlerStreamRecord(DynamoDBEvent.DynamodbStreamRecord record, IEnume
     if (record.EventName.Equals("INSERT"))
     {
         var type = record.Dynamodb.NewImage["Type"].S;
+        var action = processingActions.FirstOrDefault(a => a.Type.Equals(type));
 
+        if (action == null) throw new Exception($"The action cannot be found for type {type}");
+        
         switch (type)
         {
             case "POST":
-                Console.WriteLine("Inserted post");
+                await action.Process(record.Dynamodb.NewImage.ToPost());
                 break;
             case "COMMENT":
-                Console.WriteLine("Inserted comment");
+                await action.Process(record.Dynamodb.NewImage.ToComment());
                 break;
         }
     }
     else if (record.EventName.Equals("REMOVE"))
     {
         var type = record.Dynamodb.OldImage["Type"].S;
+        var action = processingActions.FirstOrDefault(a => a.Type.Equals(type));
+
+        if (action == null) throw new Exception($"The action cannot be found for type {type}");
+
         if (type.Equals("COMMENT"))
         {
-            Console.WriteLine("Removed comment");
+            await action.Process(record.Dynamodb.OldImage.ToComment());
         }
     }
 }

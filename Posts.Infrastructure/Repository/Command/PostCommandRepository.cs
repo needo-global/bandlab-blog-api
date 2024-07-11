@@ -14,7 +14,7 @@ public class PostCommandRepository : IPostCommandRepository
     private const string PostSkPrefix = "POST#";
     private const string CommentSkPrefix = "COMMENT#";
 
-    protected readonly DynamoDBOperationConfig _dbConfig = new()
+    private readonly DynamoDBOperationConfig _dbConfig = new()
     {
         Conversion = DynamoDBEntryConversion.V2,
         OverrideTableName = "bandlab-posts-api-develop-posts-data"// TODO Remove hard coding of table name, use Options
@@ -49,7 +49,7 @@ public class PostCommandRepository : IPostCommandRepository
     {
         var entity = await _context.LoadAsync<PostEntity>($"{PostPkPrefix}{postId}", $"{PostSkPrefix}{postId}", _dbConfig);
 
-        return entity == null ? null : new Post(entity.Id, entity.Image, entity.Creator, entity.CreatedAt);
+        return entity == null ? null : new Post(entity.Id, entity.Caption, entity.Image, entity.Creator, entity.CreatedAt);
     }
 
     public async Task PostCommentAsync(string postId, Comment comment)
@@ -60,6 +60,7 @@ public class PostCommandRepository : IPostCommandRepository
             SK = $"{CommentSkPrefix}{comment.Id}",
             Id = comment.Id,
             Type = Constants.Comment,
+            PostId = postId,
             Content = comment.Content,
             Creator = comment.Creator,
             CreatedAt = comment.CreatedAt
@@ -72,7 +73,7 @@ public class PostCommandRepository : IPostCommandRepository
     {
         var entity = await _context.LoadAsync<CommentEntity>($"{PostPkPrefix}{postId}", $"{CommentSkPrefix}{commentId}", _dbConfig);
 
-        return entity == null ? null : new Comment(entity.Id, entity.Creator, entity.Content, entity.CreatedAt);
+        return entity == null ? null : new Comment(entity.Id, entity.PostId, entity.Creator, entity.Content, entity.CreatedAt);
     }
 
     public async Task DeletePostCommentAsync(string postId, string commentId)

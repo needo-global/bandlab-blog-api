@@ -1,6 +1,8 @@
-﻿namespace Posts.Domain;
+﻿using Posts.Domain.Abstract;
 
-public class Comment
+namespace Posts.Domain;
+
+public class Comment : IEventInstance
 {
     public string Id { get; }
     public string PostId { get; }
@@ -8,16 +10,16 @@ public class Comment
     public string Creator { get; }
     public DateTime CreatedAt { get; }
 
-    public Comment(string postId, string userId, string content, DateTime createdAt)
+    public Comment(string id, string postId, string userId, string content, DateTime createdAt)
     {
-        Id = Ulid.NewUlid().ToString();
+        Id = id;
         Content = content;
         PostId = postId;
         Creator = userId;
         CreatedAt = createdAt;
     }
 
-    public Comment(string postId, string userId, string content) : this(postId, userId, content, DateTime.UtcNow)
+    public Comment(string postId, string userId, string content) : this(Ulid.NewUlid().ToString(), postId, userId, content, DateTime.UtcNow)
     {
     }
 }
