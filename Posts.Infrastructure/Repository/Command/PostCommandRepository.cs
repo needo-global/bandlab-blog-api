@@ -62,7 +62,6 @@ public class PostCommandRepository : IPostCommandRepository
 
         postEntity.CommentCount += commentCountIncrement;
 
-        // TODO - Use a GSI
         var qf = new QueryFilter();
         qf.AddCondition(nameof(CommentEntity.PK), QueryOperator.Equal, $"{CommentPkPrefix}{postId}");
 
