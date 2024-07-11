@@ -16,7 +16,7 @@ var handler = async (DynamoDBEvent ddbEvent, ILambdaContext lambdaContext) =>
 
     if (ddbEvent.Records == null)
     {
-       // TODO Logging
+        // TODO Logging
         return streamsEventResponse;
     }
 
@@ -46,12 +46,10 @@ var handler = async (DynamoDBEvent ddbEvent, ILambdaContext lambdaContext) =>
 
 async Task HandlerStreamRecord(DynamoDBEvent.DynamodbStreamRecord record, IEnumerable<IHandlerStrategy> processingActions)
 {
-    var type = record.Dynamodb.NewImage["Type"].S;
-    Console.WriteLine($"Get event name as {record.EventName}");
-    Console.WriteLine($"Get type as {type}");
-
     if (record.EventName.Equals("INSERT"))
     {
+        var type = record.Dynamodb.NewImage["Type"].S;
+
         switch (type)
         {
             case "POST":
@@ -62,9 +60,13 @@ async Task HandlerStreamRecord(DynamoDBEvent.DynamodbStreamRecord record, IEnume
                 break;
         }
     }
-    else if (record.EventName.Equals("REMOVE") && type.Equals("COMMENT"))
+    else if (record.EventName.Equals("REMOVE"))
     {
-        Console.WriteLine("Removed comment");
+        var type = record.Dynamodb.OldImage["Type"].S;
+        if (type.Equals("COMMENT"))
+        {
+            Console.WriteLine("Removed comment");
+        }
     }
 }
 
