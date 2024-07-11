@@ -24,7 +24,7 @@ export class BandLabDatabaseListenerConstruct extends Construct {
             runtime: lambda.Runtime.DOTNET_6,
             code: lambda.Code.fromAsset("../../artifacts/posts-databaseeventlistener/posts-databaseeventlistener.zip"),
             handler: "Posts.DatabaseEventListener",
-            memorySize: 512,
+            memorySize: 1024,
             timeout: cdk.Duration.seconds(300),
             environment: {
                 // TODO - Set up environment variables to avoid hardcoding in code

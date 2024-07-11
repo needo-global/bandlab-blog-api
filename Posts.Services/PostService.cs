@@ -20,12 +20,12 @@ public class PostService : IPostService
 
     public async Task<string> AddPostAsync(string userId, string caption, string fileName, byte[] content)
     {
-        var path = $"original/{fileName}";
-        
+        var post = new Post(caption, null, userId);
+
+        var path = $"original/{post.Id}";
+
         var url = await _storage.WriteAsync(path, content);
 
-        var post = new Post(caption, null, userId);
-        
         await _postCommandRepository.AddPostAsync(post, url);
 
         return post.Id;
@@ -33,7 +33,7 @@ public class PostService : IPostService
 
     public async Task<string> PostCommentAsync(string userId, string postId, string content)
     {
-        var post = await _postCommandRepository.GetPostAsync(postId);
+        var post = await _postQueryRepository.GetPostAsync(postId);
 
         if (post == null) throw new NotFoundException("post not found");
 
@@ -46,7 +46,7 @@ public class PostService : IPostService
 
     public async Task DeletePostCommentAsync(string userId, string postId, string commentId)
     {
-        var comment = await _postCommandRepository.GetPostCommentAsync(postId, commentId);
+        var comment = await _postQueryRepository.GetPostCommentAsync(postId, commentId);
 
         if (comment == null) throw new NotFoundException("comment not found");
 

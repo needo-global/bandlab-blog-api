@@ -6,8 +6,12 @@ using Microsoft.Extensions.DependencyInjection;
 using Posts.DatabaseEventListener;
 using Posts.DatabaseEventListener.Handler.Abstract;
 using Posts.DatabaseEventListener.Extensions;
+using Posts.Domain;
 
 var startup = new Startup();
+
+const string Insert = "INSERT";
+const string Remove = "REMOVE";
 
 var handler = async (DynamoDBEvent ddbEvent, ILambdaContext lambdaContext) =>
 {
@@ -47,7 +51,7 @@ var handler = async (DynamoDBEvent ddbEvent, ILambdaContext lambdaContext) =>
 
 async Task HandlerStreamRecord(DynamoDBEvent.DynamodbStreamRecord record, IEnumerable<IHandlerStrategy> processingActions)
 {
-    if (record.EventName.Equals("INSERT"))
+    if (record.EventName.Equals(Insert))
     {
         var type = record.Dynamodb.NewImage["Type"].S;
         var action = processingActions.FirstOrDefault(a => a.Type.Equals(type));
@@ -56,24 +60,24 @@ async Task HandlerStreamRecord(DynamoDBEvent.DynamodbStreamRecord record, IEnume
         
         switch (type)
         {
-            case "POST":
-                await action.Process(record.Dynamodb.NewImage.ToPost());
+            case Constants.Post:
+                await action.Process(record.Dynamodb.NewImage.ToPost(), Insert);
                 break;
-            case "COMMENT":
-                await action.Process(record.Dynamodb.NewImage.ToComment());
+            case Constants.Comment:
+                await action.Process(record.Dynamodb.NewImage.ToComment(), Insert);
                 break;
         }
     }
-    else if (record.EventName.Equals("REMOVE"))
+    else if (record.EventName.Equals(Remove))
     {
         var type = record.Dynamodb.OldImage["Type"].S;
         var action = processingActions.FirstOrDefault(a => a.Type.Equals(type));
 
         if (action == null) throw new Exception($"The action cannot be found for type {type}");
 
-        if (type.Equals("COMMENT"))
+        if (type.Equals(Constants.Comment))
         {
-            await action.Process(record.Dynamodb.OldImage.ToComment());
+            await action.Process(record.Dynamodb.OldImage.ToComment(), Remove);
         }
     }
 }

@@ -27,29 +27,9 @@ public class PostCommandRepository : IPostCommandRepository
 
     public async Task AddPostAsync(Post post, string imageUrl)
     {
-        var postEntity = new PostEntity
-        {
-            PK = $"{PostPkPrefix}{post.Id}",
-            SK = $"{PostSkPrefix}{post.Id}",
-            Id = post.Id,
-            Type = Constants.Post,
-            Image = post.Image,
-            OriginalImage = imageUrl,
-            Caption = post.Caption,
-            Creator = post.Creator,
-            CreatedAt = post.CreatedAt,
-            CommentCount = 0,
-            RecentComments = null
-        };
-
+        var postEntity = CreatePostEntity(post);
+        postEntity.OriginalImage = imageUrl;
         await _context.SaveAsync(postEntity, _dbConfig);
-    }
-
-    public async Task<Post?> GetPostAsync(string postId)
-    {
-        var entity = await _context.LoadAsync<PostEntity>($"{PostPkPrefix}{postId}", $"{PostSkPrefix}{postId}", _dbConfig);
-
-        return entity == null ? null : new Post(entity.Id, entity.Caption, entity.Image, entity.Creator, entity.CreatedAt);
     }
 
     public async Task PostCommentAsync(string postId, Comment comment)
@@ -69,15 +49,43 @@ public class PostCommandRepository : IPostCommandRepository
         await _context.SaveAsync(commentEntity, _dbConfig);
     }
 
-    public async Task<Comment?> GetPostCommentAsync(string postId, string commentId)
-    {
-        var entity = await _context.LoadAsync<CommentEntity>($"{PostPkPrefix}{postId}", $"{CommentSkPrefix}{commentId}", _dbConfig);
-
-        return entity == null ? null : new Comment(entity.Id, entity.PostId, entity.Creator, entity.Content, entity.CreatedAt);
-    }
-
     public async Task DeletePostCommentAsync(string postId, string commentId)
     {
         await _context.DeleteAsync<CommentEntity>($"{PostPkPrefix}{postId}", $"{CommentSkPrefix}{commentId}", _dbConfig);
+    }
+
+    public async Task UpdatePostCommentsInfoAsync(string postId, int commentCountIncrement, int latestCommentsCount)
+    {
+        var postEntity = await _context.LoadAsync<PostEntity>($"{PostPkPrefix}{postId}", $"{PostSkPrefix}{postId}", _dbConfig);
+
+        postEntity.CommentCount += commentCountIncrement;
+
+        postEntity.UpdatedAt = DateTime.UtcNow;
+        await _context.SaveAsync(postEntity, _dbConfig);
+    }
+
+    public async Task UpdatePostAsync(Post post)
+    {
+        var postEntity = CreatePostEntity(post);
+        postEntity.OriginalImage = post.Image;
+        postEntity.UpdatedAt = DateTime.UtcNow;
+        await _context.SaveAsync(postEntity, _dbConfig);
+    }
+
+    private PostEntity CreatePostEntity(Post post)
+    {
+        return new PostEntity
+        {
+            PK = $"{PostPkPrefix}{post.Id}",
+            SK = $"{PostSkPrefix}{post.Id}",
+            Id = post.Id,
+            Type = Constants.Post,
+            Image = post.Image,
+            Caption = post.Caption,
+            Creator = post.Creator,
+            CreatedAt = post.CreatedAt,
+            CommentCount = 0,
+            RecentComments = null
+        };
     }
 }

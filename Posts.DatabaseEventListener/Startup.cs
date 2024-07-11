@@ -48,5 +48,6 @@ public class Startup
         services.AddSingleton<IDynamoDBContext, DynamoDBContext>();
         services.AddTransient<IHandlerStrategy, PostProcessingStrategy>();
         services.AddTransient<IHandlerStrategy, CommentProcessingStrategy>();
+        services.AddSingleton<IImageProcessingService, ImageProcessingService>();
     }
 }

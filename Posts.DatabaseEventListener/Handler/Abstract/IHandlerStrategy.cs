@@ -6,5 +6,5 @@ internal interface IHandlerStrategy
 {
     string Type { get; }
 
-    Task Process<T>(T input) where T : IEventInstance;
+    Task Process<T>(T input, string operation) where T : IEventInstance;
 }

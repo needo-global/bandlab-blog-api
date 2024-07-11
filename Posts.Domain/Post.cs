@@ -6,7 +6,7 @@ public class Post : IEventInstance
 {
     public string Id { get; }
     public string Caption { get; }
-    public string Image { get; }
+    public string Image { get; private set; }
     public string Creator { get; }
     public DateTime CreatedAt { get; }
     public IEnumerable<Comment> Comments { get; set; } = new List<Comment>();
@@ -22,5 +22,10 @@ public class Post : IEventInstance
         Image = imageUrl;
         Creator = userId;
         CreatedAt = createdAt;
+    }
+
+    public void SetConvertedImage(string convertedImageUrl)
+    {
+        Image = convertedImageUrl;
     }
 }
