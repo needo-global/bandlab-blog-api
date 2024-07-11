@@ -15,7 +15,6 @@ const string Remove = "REMOVE";
 
 var handler = async (DynamoDBEvent ddbEvent, ILambdaContext lambdaContext) =>
 {
-    Console.WriteLine("Start processing");
     using var scope = startup.ServiceProvider.CreateScope();
 
     var streamsEventResponse = new StreamsEventResponse();
@@ -23,7 +22,6 @@ var handler = async (DynamoDBEvent ddbEvent, ILambdaContext lambdaContext) =>
     if (ddbEvent.Records == null)
     {
         // TODO Logging
-        Console.WriteLine("Nothing to process");
         return streamsEventResponse;
     }
 
@@ -62,7 +60,6 @@ async Task HandlerStreamRecord(DynamoDBEvent.DynamodbStreamRecord record, IEnume
 
         if (action == null) throw new Exception($"The action cannot be found for type {type}");
         
-        Console.WriteLine($"Type is {type} and event name {record.EventName}");
         switch (type)
         {
             case Constants.Post:
@@ -79,8 +76,6 @@ async Task HandlerStreamRecord(DynamoDBEvent.DynamodbStreamRecord record, IEnume
         var action = processingActions.FirstOrDefault(a => a.Type.Equals(type));
 
         if (action == null) throw new Exception($"The action cannot be found for type {type}");
-
-        Console.WriteLine($"Typeee is {type} and event name {record.EventName}");
 
         if (type.Equals(Constants.Comment))
         {

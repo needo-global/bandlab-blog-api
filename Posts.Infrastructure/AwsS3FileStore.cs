@@ -39,6 +39,7 @@ public class AwsS3FileStore : IStorage
 
             if (response is not {HttpStatusCode: HttpStatusCode.OK})
             {
+                Console.WriteLine($"Response status code - {response.HttpStatusCode}");
                 _logger.LogWarning($"Response status code - {response.HttpStatusCode}");
                 throw new Exception($"The content for file {fileName} is not saved in S3");
             }
