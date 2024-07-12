@@ -3,13 +3,11 @@
 The posts API implement the specification required for test assignment. 
 
 1. Create a post with an image and caption
-2. Add comemnt on a post
+2. Add comment on a post
 3. Delete comment on a post
 4. Get paginated (cursor based) posts ordered by number of comments in descending order with latest two comments
 
-This microservice provides the integration services to share in-scope customer data with Amazon.
-
-There are 2 parts of services:
+There are two parts for the implementation:
 
 - API 
 
@@ -25,7 +23,7 @@ There are 2 parts of services:
 - AWS: ECS Fargate, lambda, S3, DynamoDB
 - Docker
 
-## Continuous Delivery
+## Continuous Integration and Delivery
 
 CI/CD is done in [Github actions](https://github.com/needo-global/bandlab-blog-api/actions).
 
@@ -51,7 +49,7 @@ There is no extensive test coverage as writing tests consume a significant time.
 
 ## Production readiness steps
 
-I have skipped number of concerns while implementing this API. But requires following for production readiness.
+I have skipped number of concerns while implementing this API. But requires follow up for production readiness.
 
 1. Add authorization - Either using a API key or OAUTH2 protocol
 2. Add caching layer to support query results
