@@ -3,6 +3,7 @@ using Amazon.DynamoDBv2;
 using Posts.Domain;
 using Posts.Domain.Abstract;
 using Posts.Infrastructure.Repository.Entity;
+using Amazon.DynamoDBv2.DocumentModel;
 
 namespace Posts.Infrastructure.Repository.Query;
 
@@ -41,6 +42,19 @@ public class PostQueryRepository : IPostQueryRepository
 
     public async Task<IList<Post>> GetPostsByPaging(string lastPageToken)
     {
-        throw new NotImplementedException();
+        //var qf = new QueryFilter();
+        //qf.AddCondition(nameof(PostEntity.PK), QueryOperator.Equal, $"{CommentPkPrefix}{postId}");
+
+        //var queryConfig = new QueryOperationConfig
+        //{
+        //    IndexName = PostEntity.PostsByCommentCountIndex,
+        //    Filter = qf,
+        //    Select = SelectValues.AllAttributes,
+        //    Limit = 10,
+        //    BackwardSearch = true
+        //};
+
+        //var posts = await _context.FromQueryAsync<CommentEntity>(queryConfig, _dbConfig).GetNextSetAsync();
+        return null;
     }
 }
