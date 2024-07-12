@@ -62,7 +62,7 @@ public class PostQueryRepository : IPostQueryRepository
             var lastPostId = lastPostIdAndCommentCount[0];
             var lastPostCommentCount = lastPostIdAndCommentCount[1];
 
-            qf.AddCondition(nameof(PostEntity.CommentCount), QueryOperator.LessThanOrEqual, lastPostCommentCount);
+            qf.AddCondition(nameof(PostEntity.CommentCount), QueryOperator.LessThanOrEqual, int.Parse(lastPostCommentCount));
 
             queryConfig.FilterExpression = new Expression
             {
