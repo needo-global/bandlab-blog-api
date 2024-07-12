@@ -10,6 +10,7 @@ public class Post : IEventInstance
     public string Creator { get; }
     public DateTime CreatedAt { get; }
     public IList<Comment> Comments { get; set; } = new List<Comment>();
+    public int? CommentCount { get; }
 
     public Post(string caption, string imageUrl, string userId) : this(Ulid.NewUlid().ToString(), caption, imageUrl, userId, DateTime.UtcNow)
     {
@@ -28,6 +29,7 @@ public class Post : IEventInstance
     : this(id, caption, imageUrl, userId, createdAt)
     {
         Comments = comments;
+        CommentCount = commentCount;
     }
 
     public void SetConvertedImage(string convertedImageUrl)

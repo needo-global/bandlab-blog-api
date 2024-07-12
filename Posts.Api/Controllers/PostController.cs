@@ -119,7 +119,8 @@ public class PostController : ControllerBase
                 Content = c.Content,
                 Creator = c.Creator,
                 CreatedAt = c.CreatedAt,
-            }).ToList()
+            }).ToList(),
+            CommentCount = p.CommentCount
         }).ToList();
         return new OkObjectResult(new GetPostsResponse(mapped));
     }
