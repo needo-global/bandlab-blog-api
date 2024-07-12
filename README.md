@@ -42,7 +42,7 @@ For this LocalStack (https://www.localstack.cloud/) can be used. But this takes 
 
 ## Test DEVELOPMENT API
 
-The test API is hosted on a domain. The domain is https://api.needo.com.au
+The test API is hosted on a subdomain. The subdomain is https://api.needo.com.au (This is my personal domain where I hosted a website. Check it out @ https://needo.com.au)
 For example to create a post, make POST request https://api.needo.com.au/posts with a payload. No authorization is required at the moment (TODO)
 The POST payload is form data object with 'Image' file and 'Caption' string.
 
