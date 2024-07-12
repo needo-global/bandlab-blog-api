@@ -56,13 +56,16 @@ There is no extensive test coverage as writing tests consume a significant time.
 
 I have skipped number of concerns while implementing this API. But requires follow up for production readiness.
 
-1. Add authorization - Either using a API key or OAUTH2 protocol
-2. Add caching layer to support query results
-3. Add observability through logging and monitoring
-4. Add documentation
-5. Add Swagger support
-6. Post images are public - secure them if public is not safe
-7. Scanning API payloads for security vulnerabilities (like images, etc...)
-8. Use configuration options for ECS and Lambda to remove hardcoded constants
-9. Fix 'TODO' comments
-10. Consider using ElasticSearch (or AWS Opensearch) domain for querying purpose
+Formost important thing is test coverage to a satisfiable level.
+
+1. Add more tests and increase coverage
+2. Add authorization - Either using a API key or OAUTH2 protocol
+3. Add caching layer to support query results
+4. Add observability through logging and monitoring
+5. Add documentation
+6. Add Swagger support
+7. Post images are public - secure them if public is not safe
+8. Scanning API payloads for security vulnerabilities (like images, etc...)
+9. Use configuration options for ECS and Lambda to remove hardcoded constants
+10. Fix 'TODO' comments
+11. Consider using ElasticSearch (or AWS Opensearch) domain for querying purpose
