@@ -50,7 +50,7 @@ public class PostQueryRepository : IPostQueryRepository
         {
             IndexName = PostEntity.PostsByCommentCountIndex,
             Filter = qf,
-            Select = SelectValues.AllAttributes,
+            Select = SelectValues.AllProjectedAttributes,
             Limit = 10,
             BackwardSearch = true
         };
