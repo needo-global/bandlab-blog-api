@@ -20,7 +20,7 @@ There are two parts for the implementation:
 ## Tech Stack
 
 - .Net 6.0
-- AWS: ECS Fargate, lambda, S3, DynamoDB
+- AWS: ECS Fargate, lambda, S3, DynamoDB, DynamoDB streams, etc...
 - Docker
 
 ## Continuous Integration and Delivery
@@ -35,19 +35,22 @@ CI/CD is done in [Github actions](https://github.com/needo-global/bandlab-blog-a
 
 ## How to run your project
 
-// TODO - 
+In order to run the project locally we need set up some extra infrastructure as we are using AWS resources. 
+For this LocalStack (https://www.localstack.cloud/) can be used. But this takes more time and added as a TODO.
+
+### TODO - Integrate LocalStack to mock AWS resources
 
 ## Test DEVELOPMENT API
 
-The test API is hosted in this domain. The domain is https://api.needo.com.au
-For example to create a post, make POST request https://api.needo.com.au/posts with a payload.
+The test API is hosted on a domain. The domain is https://api.needo.com.au
+For example to create a post, make POST request https://api.needo.com.au/posts with a payload. No authorization is required at the moment (TODO)
 The POST payload is form data object with 'Image' file and 'Caption' string.
 
-Use the postman collection in 'Postman' folder in root folder.
+Use the postman collection in 'Postman' folder under root folder.
 
 ## Test cases
 
-There is no extensive test coverage as writing tests consume a significant time. But during normal development we should write unit tests, integration tests and end-to-end tests. I have done a model test that would follow for unit test using mocks.
+There is no extensive test coverage as writing tests consume a significant time. But during normal development we should write unit tests, integration tests and end-to-end tests. I have done a model test that would follow for unit tests using mocks.
 
 ## Production readiness steps
 
@@ -58,7 +61,8 @@ I have skipped number of concerns while implementing this API. But requires foll
 3. Add observability through logging and monitoring
 4. Add documentation
 5. Add Swagger support
-6. Post images are public - secure them if public in not safe
+6. Post images are public - secure them if public is not safe
 7. Scanning API payloads for security vulnerabilities (like images, etc...)
 8. Use configuration options for ECS and Lambda to remove hardcoded constants
 9. Fix 'TODO' comments
+10. Consider using ElasticSearch (or AWS Opensearch) domain for querying purpose
