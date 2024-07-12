@@ -46,6 +46,11 @@ public class PostQueryRepository : IPostQueryRepository
         var qf = new QueryFilter();
         qf.AddCondition(nameof(PostEntity.Type), QueryOperator.Equal, "POST");
 
+        if (!string.IsNullOrWhiteSpace(lastPageToken))
+        {
+            qf.AddCondition(nameof(PostEntity.Id), QueryOperator.GreaterThan, lastPageToken);
+        }
+
         var queryConfig = new QueryOperationConfig
         {
             IndexName = PostEntity.PostsByCommentCountIndex,
