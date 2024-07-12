@@ -1,0 +1,180 @@
+{
+	"info": {
+		"_postman_id": "f73193d2-daa5-4648-bc87-7e3a63afa0ef",
+		"name": "BandLab",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "26111403"
+	},
+	"item": [
+		{
+			"name": "Create Post",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var data =  pm.response.json();\r",
+							"\r",
+							"if (data.id)\r",
+							"{\r",
+							"    postman.setEnvironmentVariable(\"postId\", data.id);\r",
+							"}"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "Image",
+							"type": "file",
+							"src": "/C:/Users/peirisra/Desktop/vamanagement-fix.PNG"
+						},
+						{
+							"key": "Caption",
+							"value": "Test caption",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://api.needo.com.au/posts",
+					"protocol": "https",
+					"host": [
+						"api",
+						"needo",
+						"com",
+						"au"
+					],
+					"path": [
+						"posts"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Comment on a Post",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var data =  pm.response.json();\r",
+							"\r",
+							"if (data.id)\r",
+							"{\r",
+							"    postman.setEnvironmentVariable(\"commentId\", data.id);\r",
+							"}"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"Content\": \"This is the first comment\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://api.needo.com.au/posts/{{postId}}/comment",
+					"protocol": "https",
+					"host": [
+						"api",
+						"needo",
+						"com",
+						"au"
+					],
+					"path": [
+						"posts",
+						"{{postId}}",
+						"comment"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Comment on a Post",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "https://api.needo.com.au/posts/{{postId}}/comment/{{commentId}}",
+					"protocol": "https",
+					"host": [
+						"api",
+						"needo",
+						"com",
+						"au"
+					],
+					"path": [
+						"posts",
+						"{{postId}}",
+						"comment",
+						"{{commentId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Posts",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var data =  pm.response.json();\r",
+							"\r",
+							"if (data.lastPostToken)\r",
+							"{\r",
+							"    postman.setEnvironmentVariable(\"lastPostToken\", data.lastPostToken);\r",
+							"}"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.needo.com.au/posts?lastPostToken={{lastPostToken}}",
+					"protocol": "https",
+					"host": [
+						"api",
+						"needo",
+						"com",
+						"au"
+					],
+					"path": [
+						"posts"
+					],
+					"query": [
+						{
+							"key": "lastPostToken",
+							"value": "{{lastPostToken}}"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
