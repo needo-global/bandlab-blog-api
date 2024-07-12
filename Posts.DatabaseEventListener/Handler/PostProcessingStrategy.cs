@@ -33,8 +33,9 @@ internal class PostProcessingStrategy : IHandlerStrategy
 
         var convertedImageUrl = await _storage.WriteAsync($"converted/{post.Id}.jpg", convertedImage);
 
+        var originalImageUrl = post.Image;
         post.SetConvertedImage(convertedImageUrl);
 
-        await _postCommandRepository.UpdatePostAsync(post);
+        await _postCommandRepository.UpdatePostAsync(post, originalImageUrl);
     }
 }

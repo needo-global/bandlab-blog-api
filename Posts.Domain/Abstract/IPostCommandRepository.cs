@@ -6,5 +6,5 @@ public interface IPostCommandRepository
     Task PostCommentAsync(string postId, Comment comment);
     Task DeletePostCommentAsync(string postId, string commentId);
     Task UpdatePostCommentsInfoAsync(string postId, int commentCountIncrement, int latestCommentsCount);
-    Task UpdatePostAsync(Post post);
+    Task UpdatePostAsync(Post post, string imageUrl);
 }

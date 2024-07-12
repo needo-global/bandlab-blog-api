@@ -82,10 +82,11 @@ public class PostCommandRepository : IPostCommandRepository
         await _context.SaveAsync(postEntity, _dbConfig);
     }
 
-    public async Task UpdatePostAsync(Post post)
+    public async Task UpdatePostAsync(Post post, string imageUrl)
     {
         var postEntity = CreatePostEntity(post);
-        postEntity.OriginalImage = post.Image;
+        postEntity.Image = post.Image;
+        postEntity.OriginalImage = imageUrl;
         postEntity.UpdatedAt = DateTime.UtcNow;
         await _context.SaveAsync(postEntity, _dbConfig);
     }
