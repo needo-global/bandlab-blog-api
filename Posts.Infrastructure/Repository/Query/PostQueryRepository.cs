@@ -1,4 +1,5 @@
-﻿using Amazon.DynamoDBv2.DataModel;
+﻿using System.Text.Json;
+using Amazon.DynamoDBv2.DataModel;
 using Amazon.DynamoDBv2;
 using Posts.Domain;
 using Posts.Domain.Abstract;
@@ -42,19 +43,30 @@ public class PostQueryRepository : IPostQueryRepository
 
     public async Task<IList<Post>> GetPostsByPaging(string lastPageToken)
     {
-        //var qf = new QueryFilter();
-        //qf.AddCondition(nameof(PostEntity.PK), QueryOperator.Equal, $"{CommentPkPrefix}{postId}");
+        var qf = new QueryFilter();
+        qf.AddCondition(nameof(PostEntity.Type), QueryOperator.Equal, "POST");
 
-        //var queryConfig = new QueryOperationConfig
-        //{
-        //    IndexName = PostEntity.PostsByCommentCountIndex,
-        //    Filter = qf,
-        //    Select = SelectValues.AllAttributes,
-        //    Limit = 10,
-        //    BackwardSearch = true
-        //};
+        var queryConfig = new QueryOperationConfig
+        {
+            IndexName = PostEntity.PostsByCommentCountIndex,
+            Filter = qf,
+            Select = SelectValues.AllAttributes,
+            Limit = 10,
+            BackwardSearch = true
+        };
 
-        //var posts = await _context.FromQueryAsync<CommentEntity>(queryConfig, _dbConfig).GetNextSetAsync();
-        return null;
+        var posts = await _context.FromQueryAsync<PostEntity>(queryConfig, _dbConfig).GetNextSetAsync();
+
+        return posts
+            .Select(p => new Post(p.Id, p.Caption, p.Image, p.Creator, p.CreatedAt, ToComments(p.RecentComments)))
+            .ToList();
+    }
+
+    private IList<Comment> ToComments(string? comments)
+    {
+        if (string.IsNullOrWhiteSpace(comments)) return new List<Comment>();
+
+        var entities = JsonSerializer.Deserialize<IList<CommentEntity>>(comments);
+        return entities.Select(e => new Comment(e.Id, e.PostId, e.Creator, e.Content, e.CreatedAt)).ToList();
     }
 }

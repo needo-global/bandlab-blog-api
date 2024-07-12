@@ -44,13 +44,13 @@ export class BandLabApiConstruct extends Construct {
       }
     );
 
-    // this.postsTable.addGlobalSecondaryIndex({
-    //   indexName: 'PostsByCommentCountIndex',
-    //   partitionKey: {name: 'Type', type: dynamodb.AttributeType.STRING},
-    //   sortKey: {name: 'CommentCount', type: dynamodb.AttributeType.NUMBER},
-    //   projectionType: dynamodb.ProjectionType.INCLUDE,
-    //   nonKeyAttributes: ['Id', 'Image', 'Caption', 'Creator', 'CreatedAt', 'RecentComments'],
-    // });
+    this.postsTable.addGlobalSecondaryIndex({
+      indexName: 'PostsByCommentCountIndex',
+      partitionKey: {name: 'Type', type: dynamodb.AttributeType.STRING},
+      sortKey: {name: 'CommentCount', type: dynamodb.AttributeType.NUMBER},
+      projectionType: dynamodb.ProjectionType.INCLUDE,
+      nonKeyAttributes: ['Id', 'Image', 'Caption', 'Creator', 'CreatedAt', 'RecentComments'],
+    });
 
     const dataBucketName = props.stage == 'master' ? "bandlab-post-data" : "bandlab-post-dev-data";
     this.postsImages = new s3.Bucket(this, `${props.stackName}-post-images`, {

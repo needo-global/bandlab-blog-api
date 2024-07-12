@@ -9,7 +9,7 @@ public class Post : IEventInstance
     public string Image { get; private set; }
     public string Creator { get; }
     public DateTime CreatedAt { get; }
-    public IEnumerable<Comment> Comments { get; set; } = new List<Comment>();
+    public IList<Comment> Comments { get; set; } = new List<Comment>();
 
     public Post(string caption, string imageUrl, string userId) : this(Ulid.NewUlid().ToString(), caption, imageUrl, userId, DateTime.UtcNow)
     {
@@ -22,6 +22,12 @@ public class Post : IEventInstance
         Image = imageUrl;
         Creator = userId;
         CreatedAt = createdAt;
+    }
+
+    public Post(string id, string caption, string imageUrl, string userId, DateTime createdAt, IList<Comment> comments)
+    : this(id, caption, imageUrl, userId, createdAt)
+    {
+        Comments = comments;
     }
 
     public void SetConvertedImage(string convertedImageUrl)
