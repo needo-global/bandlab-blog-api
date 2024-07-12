@@ -8,4 +8,6 @@ public class PostDto
     public string Creator { get; set; }
     public DateTime CreatedAt { get; set; }
     public IEnumerable<CommentDto> Comments { get; set; }
+    public int CommentCount { get; set; }
+    public string Key => $"{Id}-{CommentCount}";
 }

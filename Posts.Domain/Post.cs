@@ -24,7 +24,7 @@ public class Post : IEventInstance
         CreatedAt = createdAt;
     }
 
-    public Post(string id, string caption, string imageUrl, string userId, DateTime createdAt, IList<Comment> comments)
+    public Post(string id, string caption, string imageUrl, string userId, DateTime createdAt, IList<Comment> comments, int? commentCount = null)
     : this(id, caption, imageUrl, userId, createdAt)
     {
         Comments = comments;

@@ -4,7 +4,7 @@ public class GetPostsResponse
 {
     public IList<PostDto> Posts { get; }
 
-    public string? LastPostToken => Posts?.LastOrDefault()?.Id;
+    public string? LastPostToken => Posts?.LastOrDefault()?.Key;
 
     public GetPostsResponse(IList<PostDto> posts)
     {

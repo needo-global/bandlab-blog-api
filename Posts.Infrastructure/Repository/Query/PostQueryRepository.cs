@@ -51,14 +51,30 @@ public class PostQueryRepository : IPostQueryRepository
             IndexName = PostEntity.PostsByCommentCountIndex,
             Filter = qf,
             Select = SelectValues.AllProjectedAttributes,
-            Limit = 100, // TODO - Make this configurable
-            BackwardSearch = true
+            Limit = 5, // TODO - Make this configurable
+            BackwardSearch = true,
         };
+
+        var lastPostIdAndCommentCount = lastPageToken.Split('-');
+
+        if (lastPostIdAndCommentCount is {Length: 2})
+        {
+            var lastPostId = lastPostIdAndCommentCount[0];
+            var lastPostCommentCount = lastPostIdAndCommentCount[1];
+
+            qf.AddCondition(nameof(PostEntity.CommentCount), QueryOperator.LessThanOrEqual, lastPostCommentCount);
+
+            queryConfig.FilterExpression = new Expression
+            {
+                ExpressionStatement = "Id != :id",
+                ExpressionAttributeValues = new Dictionary<string, DynamoDBEntry> { {"id", lastPostId } }
+            };
+        }
 
         var posts = await _context.FromQueryAsync<PostEntity>(queryConfig, _dbConfig).GetNextSetAsync();
 
         return posts
-            .Select(p => new Post(p.Id, p.Caption, p.Image, p.Creator, p.CreatedAt, ToComments(p.RecentComments)))
+            .Select(p => new Post(p.Id, p.Caption, p.Image, p.Creator, p.CreatedAt, ToComments(p.RecentComments), p.CommentCount))
             .ToList();
     }
 
