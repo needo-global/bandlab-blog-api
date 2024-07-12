@@ -82,6 +82,11 @@ async Task HandlerStreamRecord(DynamoDBEvent.DynamodbStreamRecord record, IEnume
             await action.Process(record.Dynamodb.OldImage.ToComment(), Remove);
         }
     }
+    else
+    {
+        /* This should be a post or comment modification.
+           Ideally we should filter those events being forwarded to this lambda using a filter */
+    }
 }
 
 await LambdaBootstrapBuilder.Create(handler, new DefaultLambdaJsonSerializer())
