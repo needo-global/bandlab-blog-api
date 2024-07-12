@@ -67,7 +67,7 @@ public class PostQueryRepository : IPostQueryRepository
             queryConfig.FilterExpression = new Expression
             {
                 ExpressionStatement = "Id != :id",
-                ExpressionAttributeValues = new Dictionary<string, DynamoDBEntry> { {"id", lastPostId } }
+                ExpressionAttributeValues = new Dictionary<string, DynamoDBEntry> { {":id", lastPostId } }
             };
         }
 
