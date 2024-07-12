@@ -41,7 +41,7 @@ public class PostQueryRepository : IPostQueryRepository
         return entity == null ? null : new Comment(entity.Id, entity.PostId, entity.Creator, entity.Content, entity.CreatedAt);
     }
 
-    public async Task<IList<Post>> GetPostsByPaging(string lastPageToken)
+    public async Task<IList<Post>> GetPostsByPaging(string? lastPageToken)
     {
         var qf = new QueryFilter();
         qf.AddCondition(nameof(PostEntity.Type), QueryOperator.Equal, "POST");
@@ -55,7 +55,7 @@ public class PostQueryRepository : IPostQueryRepository
             BackwardSearch = true,
         };
 
-        var lastPostIdAndCommentCount = lastPageToken.Split('-');
+        var lastPostIdAndCommentCount = lastPageToken?.Split('-');
 
         if (lastPostIdAndCommentCount is {Length: 2})
         {
@@ -66,7 +66,7 @@ public class PostQueryRepository : IPostQueryRepository
 
             queryConfig.FilterExpression = new Expression
             {
-                ExpressionStatement = "Id != :id",
+                ExpressionStatement = "Id <> :id",
                 ExpressionAttributeValues = new Dictionary<string, DynamoDBEntry> { {":id", lastPostId } }
             };
         }

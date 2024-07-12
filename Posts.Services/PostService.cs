@@ -56,7 +56,7 @@ public class PostService : IPostService
         await _postCommandRepository.DeletePostCommentAsync(postId, commentId);
     }
 
-    public async Task<IList<Post>> GetPostsByPaging(string lastPostToken)
+    public async Task<IList<Post>> GetPostsByPaging(string? lastPostToken)
     {
         var posts = await _postQueryRepository.GetPostsByPaging(lastPostToken);
         return posts;
