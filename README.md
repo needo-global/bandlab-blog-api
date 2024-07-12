@@ -33,7 +33,7 @@ CI/CD is done in [Github actions](https://github.com/needo-global/bandlab-blog-a
 
 ![Alt text](https://bandlab-post-dev-data.s3.ap-southeast-2.amazonaws.com/bandlab-api-architecture.PNG)
 
-## How to run your project
+## How to run the project
 
 In order to run the project locally we need set up some extra infrastructure as we are using AWS resources. 
 For this LocalStack (https://www.localstack.cloud/) can be used. But this takes more time and added as a TODO.
