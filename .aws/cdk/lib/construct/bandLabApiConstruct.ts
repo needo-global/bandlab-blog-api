@@ -49,7 +49,7 @@ export class BandLabApiConstruct extends Construct {
       partitionKey: {name: 'Type', type: dynamodb.AttributeType.STRING},
       sortKey: {name: 'CommentCount', type: dynamodb.AttributeType.NUMBER},
       projectionType: dynamodb.ProjectionType.INCLUDE,
-      nonKeyAttributes: ['Id', 'Image', 'Caption', 'Creator', 'CreatedAt', 'RecentComments'],
+      nonKeyAttributes: ['Id', 'Image', 'Caption', 'Creator', 'CreatedAt', 'CommentCount', 'RecentComments'],
     });
 
     const dataBucketName = props.stage == 'master' ? "bandlab-post-data" : "bandlab-post-dev-data";
