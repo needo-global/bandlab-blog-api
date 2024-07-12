@@ -117,7 +117,7 @@ export class BandLabApiConstruct extends Construct {
       effect: iam.Effect.ALLOW,
       sid: "DynamoDBActions",
       actions: ["dynamodb:*"],
-      resources: [this.postsTable.tableArn],
+      resources: [this.postsTable.tableArn, `${this.postsTable.tableArn}/index/*`],
     }));
 
     const container = taskDefinition.addContainer(
