@@ -6,8 +6,8 @@ namespace Posts.Infrastructure;
 
 public class ImageProcessingService : IImageProcessingService
 {
-    private const int ResizeWidth = 600;
-    private const int ResizeHeight = 600;
+    private const int ResizeWidth = 600; // TODO - Move to configuration options
+    private const int ResizeHeight = 600; // TODO - Move to configuration options
 
     public async Task<byte[]> ConvertAsync(byte[] imageData)
     {

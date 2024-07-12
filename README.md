@@ -29,6 +29,8 @@ CI/CD is done in [Github actions](https://github.com/needo-global/bandlab-blog-a
 
 ## High level Architecture
 
+### NOTE: We can upgrade the solution to use an ElasticSearch cluster for querying purposes. So all DynamoDB stream events could be pushed to the cluster.
+
 ![Alt text](https://bandlab-post-dev-data.s3.ap-southeast-2.amazonaws.com/bandlab-api-architecture.PNG)
 
 ## How to run your project
@@ -58,3 +60,5 @@ I have skipped number of concerns while implementing this API. But requires foll
 5. Add Swagger support
 6. Post images are public - secure them if public in not safe
 7. Scanning API payloads for security vulnerabilities (like images, etc...)
+8. Use configuration options for ECS and Lambda to remove hardcoded constants
+9. Fix 'TODO' comments
