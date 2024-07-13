@@ -12,11 +12,6 @@ public class PostCommandRepository : IPostCommandRepository
 {
     private readonly IDynamoDBContext _context;
 
-    private const string PostPkPrefix = "POST#";
-    private const string PostSkPrefix = "POST#";
-    private const string CommentPkPrefix = "COMMENT#";
-    private const string CommentSkPrefix = "COMMENT#";
-
     private readonly DynamoDBOperationConfig _dbConfig = new()
     {
         Conversion = DynamoDBEntryConversion.V2,
@@ -39,10 +34,10 @@ public class PostCommandRepository : IPostCommandRepository
     {
         var commentEntity = new CommentEntity
         {
-            PK = $"{CommentPkPrefix}{postId}",
-            SK = $"{CommentSkPrefix}{comment.Id}",
+            PK = $"{Constants.CommentPkPrefix}{postId}",
+            SK = $"{Constants.CommentSkPrefix}{comment.Id}",
             Id = comment.Id,
-            Type = Constants.Comment,
+            Type = Domain.Constants.Comment,
             PostId = postId,
             Content = comment.Content,
             Creator = comment.Creator,
@@ -54,17 +49,17 @@ public class PostCommandRepository : IPostCommandRepository
 
     public async Task DeletePostCommentAsync(string postId, string commentId)
     {
-        await _context.DeleteAsync<CommentEntity>($"{CommentPkPrefix}{postId}", $"{CommentSkPrefix}{commentId}", _dbConfig);
+        await _context.DeleteAsync<CommentEntity>($"{Constants.CommentPkPrefix}{postId}", $"{Constants.CommentSkPrefix}{commentId}", _dbConfig);
     }
 
     public async Task UpdatePostCommentsInfoAsync(string postId, int commentCountIncrement, int latestCommentsCount)
     {
-        var postEntity = await _context.LoadAsync<PostEntity>($"{PostPkPrefix}{postId}", $"{PostSkPrefix}{postId}", _dbConfig);
+        var postEntity = await _context.LoadAsync<PostEntity>($"{Constants.PostPkPrefix}{postId}", $"{Constants.PostSkPrefix}{postId}", _dbConfig);
 
         postEntity.CommentCount += commentCountIncrement;
 
         var qf = new QueryFilter();
-        qf.AddCondition(nameof(CommentEntity.PK), QueryOperator.Equal, $"{CommentPkPrefix}{postId}");
+        qf.AddCondition(nameof(CommentEntity.PK), QueryOperator.Equal, $"{Constants.CommentPkPrefix}{postId}");
 
         var queryConfig = new QueryOperationConfig
         {
@@ -95,10 +90,10 @@ public class PostCommandRepository : IPostCommandRepository
     {
         return new PostEntity
         {
-            PK = $"{PostPkPrefix}{post.Id}",
-            SK = $"{PostSkPrefix}{post.Id}",
+            PK = $"{Constants.PostPkPrefix}{post.Id}",
+            SK = $"{Constants.PostSkPrefix}{post.Id}",
             Id = post.Id,
-            Type = Constants.Post,
+            Type = Domain.Constants.Post,
             Image = post.Image,
             Caption = post.Caption,
             Creator = post.Creator,

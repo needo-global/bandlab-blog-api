@@ -12,10 +12,6 @@ public class PostQueryRepository : IPostQueryRepository
 {
     private readonly IDynamoDBContext _context;
 
-    private const string PostPkPrefix = "POST#";
-    private const string PostSkPrefix = "POST#";
-    private const string CommentSkPrefix = "COMMENT#";
-
     private readonly DynamoDBOperationConfig _dbConfig = new()
     {
         Conversion = DynamoDBEntryConversion.V2,
@@ -29,14 +25,14 @@ public class PostQueryRepository : IPostQueryRepository
 
     public async Task<Post?> GetPostAsync(string postId)
     {
-        var entity = await _context.LoadAsync<PostEntity>($"{PostPkPrefix}{postId}", $"{PostSkPrefix}{postId}", _dbConfig);
+        var entity = await _context.LoadAsync<PostEntity>($"{Constants.PostPkPrefix}{postId}", $"{Constants.PostSkPrefix}{postId}", _dbConfig);
 
         return entity == null ? null : new Post(entity.Id, entity.Caption, entity.Image, entity.Creator, entity.CreatedAt);
     }
 
     public async Task<Comment?> GetPostCommentAsync(string postId, string commentId)
     {
-        var entity = await _context.LoadAsync<CommentEntity>($"{PostPkPrefix}{postId}", $"{CommentSkPrefix}{commentId}", _dbConfig);
+        var entity = await _context.LoadAsync<CommentEntity>($"{Constants.CommentPkPrefix}{postId}", $"{Constants.CommentSkPrefix}{commentId}", _dbConfig);
 
         return entity == null ? null : new Comment(entity.Id, entity.PostId, entity.Creator, entity.Content, entity.CreatedAt);
     }
